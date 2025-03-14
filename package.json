@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "prepare": "husky install",
     "format": "prettier --write .",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "start": "vite"
   },
   "keywords": [],
   "author": "",
@@ -42,10 +43,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-<<<<<<< HEAD
-=======
     "react-kakao-maps-sdk": "^1.1.27",
->>>>>>> 938344b4 (chore: Restore project files)
     "react-router-dom": "^6.30.0",
     "vite": "^6.2.1"
   }

@@ -10,15 +10,12 @@ export const categories = [
   { id: 8, name: '기타', icon: '🛒' },
 ]
 
-<<<<<<< HEAD
-=======
 // 현재 위치 (구름스퀘어)
 export const currentPosition = {
   lat: 33.450705,
   lng: 126.570677,
 }
 
->>>>>>> 938344b4 (chore: Restore project files)
 // 가게 데이터
 export const stores = [
   {
@@ -29,11 +26,8 @@ export const stores = [
     distance: '0.3km',
     discount: '30%',
     phone: '02-123-4567',
-<<<<<<< HEAD
-=======
     lat: 33.450936,
     lng: 126.569477,
->>>>>>> 938344b4 (chore: Restore project files)
     products: [
       {
         id: 1,
@@ -73,14 +67,6 @@ export const stores = [
   },
   {
     id: 2,
-<<<<<<< HEAD
-    name: '에드윈 정육점',
-    category: '정육',
-    image: 'https://via.placeholder.com/150?text=Meat',
-    distance: '0.5km',
-    discount: '20%',
-    phone: '02-234-5678',
-=======
     name: '바다향 수산물',
     category: '수산',
     image: 'https://via.placeholder.com/150?text=Seafood',
@@ -89,7 +75,6 @@ export const stores = [
     phone: '02-234-5678',
     lat: 33.451393,
     lng: 126.571892,
->>>>>>> 938344b4 (chore: Restore project files)
     products: [
       {
         id: 3,
@@ -113,14 +98,6 @@ export const stores = [
   },
   {
     id: 3,
-<<<<<<< HEAD
-    name: '시에나 수산',
-    category: '수산',
-    image: 'https://via.placeholder.com/150?text=Fish',
-    distance: '0.7km',
-    discount: '25%',
-    phone: '02-345-6789',
-=======
     name: '행복한 분식',
     category: '분식',
     image: 'https://via.placeholder.com/150?text=Snack',
@@ -129,7 +106,6 @@ export const stores = [
     phone: '02-345-6789',
     lat: 33.450432,
     lng: 126.572282,
->>>>>>> 938344b4 (chore: Restore project files)
     products: [
       {
         id: 4,
@@ -154,14 +130,6 @@ export const stores = [
   },
   {
     id: 4,
-<<<<<<< HEAD
-    name: '현 분식',
-    category: '분식',
-    image: 'https://via.placeholder.com/150?text=StreetFood',
-    distance: '0.2km',
-    discount: '15%',
-    phone: '02-456-7890',
-=======
     name: '쫄깃정육점',
     category: '정육',
     image: 'https://via.placeholder.com/150?text=Meat',
@@ -170,7 +138,6 @@ export const stores = [
     phone: '02-456-7890',
     lat: 33.449857,
     lng: 126.569235,
->>>>>>> 938344b4 (chore: Restore project files)
     products: [
       {
         id: 6,
@@ -203,14 +170,6 @@ export const stores = [
   },
   {
     id: 5,
-<<<<<<< HEAD
-    name: '코비 과일가게',
-    category: '야채/과일',
-    image: 'https://via.placeholder.com/150?text=Fruits',
-    distance: '1.0km',
-    discount: '40%',
-    phone: '02-567-8901',
-=======
     name: '싱싱청과',
     category: '야채/과일',
     image: 'https://via.placeholder.com/150?text=Fruits',
@@ -219,7 +178,6 @@ export const stores = [
     phone: '02-567-8901',
     lat: 33.452123,
     lng: 126.570563,
->>>>>>> 938344b4 (chore: Restore project files)
     products: [
       {
         id: 8,
@@ -244,14 +202,6 @@ export const stores = [
   },
   {
     id: 6,
-<<<<<<< HEAD
-    name: '에이븐 카페',
-    category: '카페/디저트',
-    image: 'https://via.placeholder.com/150?text=Cafe',
-    distance: '0.4km',
-    discount: '35%',
-    phone: '02-678-9012',
-=======
     name: '달콤 카페',
     category: '카페/디저트',
     image: 'https://via.placeholder.com/150?text=Cafe',
@@ -260,7 +210,6 @@ export const stores = [
     phone: '02-678-9012',
     lat: 33.450378,
     lng: 126.574585,
->>>>>>> 938344b4 (chore: Restore project files)
     products: [
       {
         id: 10,
@@ -300,14 +249,6 @@ export const stores = [
   },
   {
     id: 7,
-<<<<<<< HEAD
-    name: '현 마트',
-    category: '기타',
-    image: 'https://via.placeholder.com/150?text=Mart',
-    distance: '1.2km',
-    discount: '10%',
-    phone: '02-789-0123',
-=======
     name: '만물상회',
     category: '기타',
     image: 'https://via.placeholder.com/150?text=Others',
@@ -316,7 +257,6 @@ export const stores = [
     phone: '02-789-0123',
     lat: 33.448662,
     lng: 126.571738,
->>>>>>> 938344b4 (chore: Restore project files)
     products: [
       {
         id: 12,
@@ -346,6 +286,8 @@ export const stores = [
     distance: '0.8km',
     discount: '25%',
     phone: '02-890-1234',
+    lat: 33.451768,
+    lng: 126.568975,
     products: [],
     reviews: [],
   },

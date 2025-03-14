@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Navigation from '../components/layout/Navigation'
-import Header from '../components/layout/Header'
-import { stores } from '../data/storeData'
-import CategoryList from '../components/store/CategoryList'
-=======
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navigation from '../components/layout/Navigation'
@@ -14,15 +6,12 @@ import { stores, categories, currentPosition } from '../data/storeData'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import StoreMarker from '../components/map/StoreMarker'
 import MapController from '../components/map/MapController'
->>>>>>> 938344b4 (chore: Restore project files)
 
 function MapPage() {
   const navigate = useNavigate()
   const [showDiscountOnly, setShowDiscountOnly] = useState(false)
   const [filteredStores, setFilteredStores] = useState(stores)
   const [selectedCategory, setSelectedCategory] = useState('전체')
-<<<<<<< HEAD
-=======
   const [selectedStoreId, setSelectedStoreId] = useState(null)
   const [mapCenter, setMapCenter] = useState(currentPosition)
   const [mapLevel, setMapLevel] = useState(3)
@@ -53,7 +42,6 @@ function MapPage() {
 
     loadKakaoMap()
   }, [])
->>>>>>> 938344b4 (chore: Restore project files)
 
   // 할인 필터와 카테고리 변경 시 가게 목록 필터링
   useEffect(() => {
@@ -72,8 +60,6 @@ function MapPage() {
     setFilteredStores(result)
   }, [showDiscountOnly, selectedCategory])
 
-<<<<<<< HEAD
-=======
   // 마커 클릭 핸들러
   const handleMarkerClick = (storeId) => {
     setSelectedStoreId(storeId === selectedStoreId ? null : storeId)
@@ -93,20 +79,12 @@ function MapPage() {
     }
   }
 
->>>>>>> 938344b4 (chore: Restore project files)
   return (
     <div className="flex flex-col h-full">
       {/* 헤더 */}
       <Header title="지도" />
 
       {/* 카테고리 */}
-<<<<<<< HEAD
-      <div className="border-b">
-        <CategoryList
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
-=======
       <div className="border-b overflow-x-auto whitespace-nowrap">
         <div className="inline-flex p-2">
           {categories.map((category) => (
@@ -132,7 +110,6 @@ function MapPage() {
             </button>
           ))}
         </div>
->>>>>>> 938344b4 (chore: Restore project files)
       </div>
 
       {/* 검색바 */}
@@ -150,13 +127,6 @@ function MapPage() {
       </div>
 
       {/* 지도 영역 */}
-<<<<<<< HEAD
-      <div className="flex-1 relative bg-gray-100 overflow-hidden">
-        {/* 지도가 들어갈 자리 */}
-        <div className="absolute inset-0 h-2/3">
-          {/* 실제 지도는 나중에 구현 */}
-        </div>
-=======
       <div
         className="flex-1 relative bg-gray-100 overflow-hidden"
         style={{ minHeight: '400px' }}
@@ -194,7 +164,6 @@ function MapPage() {
             <p>지도를 로딩 중입니다...</p>
           </div>
         )}
->>>>>>> 938344b4 (chore: Restore project files)
 
         {/* 마감 할인 필터 */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2">
@@ -212,18 +181,7 @@ function MapPage() {
         </div>
 
         {/* 확대/축소 버튼 */}
-<<<<<<< HEAD
-        <div className="absolute right-4 top-1/3 -translate-y-1/2 flex flex-col gap-2">
-          <button className="w-8 h-8 bg-white rounded-lg shadow flex items-center justify-center">
-            +
-          </button>
-          <button className="w-8 h-8 bg-white rounded-lg shadow flex items-center justify-center">
-            -
-          </button>
-        </div>
-=======
         <MapController onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
->>>>>>> 938344b4 (chore: Restore project files)
 
         {/* 가게 목록 */}
         <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-white rounded-t-2xl shadow-lg overflow-y-auto">
@@ -243,14 +201,10 @@ function MapPage() {
                       src={store.image}
                       alt={store.name}
                       className="w-full h-full object-cover rounded-md"
-<<<<<<< HEAD
-=======
                       onError={(e) => {
                         e.target.onerror = null
-                        e.target.src =
-                          'https://via.placeholder.com/150/CCCCCC?text=이미지없음'
+                        e.target.src = 'https://via.placeholder.com/150/CCCCCC?text=이미지없음'
                       }}
->>>>>>> 938344b4 (chore: Restore project files)
                     />
                   </div>
                   <div className="flex-1">
