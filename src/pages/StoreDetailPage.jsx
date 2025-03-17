@@ -1,37 +1,32 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import Navigation from '../components/layout/Navigation'
 import { stores } from '../data/storeData'
 import Header from '../components/layout/Header'
+import { Map, MapMarker } from 'react-kakao-maps-sdk' // ✅ 카카오맵 추가
 
 function StoreDetailPage() {
-  const navigate = useNavigate()
   const { id } = useParams()
   const [activeTab, setActiveTab] = useState('products')
   const [store, setStore] = useState(null)
   const [showPhonePopup, setShowPhonePopup] = useState(false)
-  const [copySuccess, setCopySuccess] = useState(false)
+  const [copySuccess, setCopySuccess] = useState(false) // ✅ 주소 복사 성공 상태 추가
 
   useEffect(() => {
-    // 가게 ID로 가게 정보 찾기
-    const foundStore = stores.find((s) => s.id === parseInt(id))
-    if (foundStore) {
-      setStore(foundStore)
-    }
+    const foundStore = stores.find((s) => s.id === parseInt(id, 10)) // ✅ parseInt 수정
+    if (foundStore) setStore(foundStore)
   }, [id])
 
+  // ✅ 주소 복사 기능 추가
   const handleCopyClick = () => {
-    if (store && store.phone) {
-      navigator.clipboard
-        .writeText(store.phone)
-        .then(() => {
-          setCopySuccess(true)
-          setTimeout(() => setCopySuccess(false), 2000)
-        })
-        .catch((err) => {
-          console.error('클립보드 복사 실패:', err)
-        })
-    }
+    if (!store?.address) return
+    navigator.clipboard
+      .writeText(store.address)
+      .then(() => {
+        setCopySuccess(true)
+        setTimeout(() => setCopySuccess(false), 2000)
+      })
+      .catch((err) => console.error('클립보드 복사 실패:', err))
   }
 
   if (!store) {
@@ -44,96 +39,54 @@ function StoreDetailPage() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* 헤더 */}
       <Header title={store.name} />
 
       <div className="flex-1 overflow-y-auto">
         {/* 가게 이미지 */}
-        <div className="relative">
-          <img
-            src={store.image}
-            alt={store.name}
-            className="w-full h-48 object-cover"
-          />
-          <div className="absolute bottom-0 left-0 right-0 p-4 flex justify-center">
-            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center border-4 border-white shadow-md overflow-hidden">
-              <img
-                src={store.image}
-                alt={store.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
+        <img src={store.image} alt={store.name} className="w-full h-48 object-cover" />
 
         {/* 가게 이름 */}
-        <div className="text-center mt-2 mb-4">
-          <h2 className="text-xl font-bold">{store.name}</h2>
-        </div>
+        <h2 className="text-xl font-bold text-center mt-2 mb-4">{store.name}</h2>
 
         {/* 탭 메뉴 */}
         <div className="flex border-b">
-          <button
-            className={`flex-1 py-2 text-center font-medium ${activeTab === 'products' ? 'border-b-2 border-gray-700 text-gray-700' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('products')}
-          >
-            상품 정보
-          </button>
-          <button
-            className={`flex-1 py-2 text-center font-medium ${activeTab === 'storeInfo' ? 'border-b-2 border-gray-700 text-gray-700' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('storeInfo')}
-          >
-            가게 정보
-          </button>
-          <button
-            className={`flex-1 py-2 text-center font-medium ${activeTab === 'reviews' ? 'border-b-2 border-gray-700 text-gray-700' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('reviews')}
-          >
-            리뷰({store.reviews.length})
-          </button>
+          {['products', 'storeInfo', 'reviews'].map((tab) => (
+            <button
+              key={tab}
+              className={`flex-1 py-2 text-center font-medium ${
+                activeTab === tab ? 'border-b-2 border-gray-700 text-gray-700' : 'text-gray-500'
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab === 'products' && '상품 정보'}
+              {tab === 'storeInfo' && '가게 정보'}
+              {tab === 'reviews' && `리뷰 (${store.reviews.length})`}
+            </button>
+          ))}
         </div>
 
         {/* 상품 정보 탭 */}
         {activeTab === 'products' && (
           <div className="p-4">
-            <h3 className="font-bold mb-2">
-              마감 할인 {store.products.length}개
-            </h3>
-
+            <h3 className="font-bold mb-2">마감 할인 {store.products.length}개</h3>
             {store.products.map((product) => (
-              <div
-                key={product.id}
-                className="border rounded-lg p-3 mb-4 relative"
-              >
-                <div className="flex justify-between">
-                  <div className="flex-1">
-                    <h4 className="font-bold">{product.name}</h4>
-                    <div className="mt-1">
-                      <p className="text-sm line-through text-gray-400">
-                        {product.originalPrice.toLocaleString()}원
-                      </p>
-                      <div className="flex items-center">
-                        <p className="text-gray-700 font-bold">
-                          {product.discountPrice.toLocaleString()}원
-                        </p>
-                        <p className="ml-2 text-gray-700 font-bold">
-                          {product.discountRate}
-                        </p>
-                      </div>
+              <div key={product.id} className="border rounded-lg p-3 mb-4 relative flex">
+                <div className="flex-1">
+                  <h4 className="font-bold">{product.name}</h4>
+                  <p className="text-sm line-through text-gray-400">
+                    {product.originalPrice.toLocaleString()}원
+                  </p>
+                  <p className="text-gray-700 font-bold">
+                    {product.discountPrice.toLocaleString()}원 ({product.discountRate})
+                  </p>
+                </div>
+                <div className="w-24 h-24 bg-gray-200 rounded-md flex items-center justify-center relative">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-md" />
+                  {product.isSoldOut && (
+                    <div className="absolute inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
+                      <span className="text-xl font-bold text-white">품절</span>
                     </div>
-                  </div>
-                  <div className="w-24 h-24 bg-gray-200 rounded-md flex items-center justify-center relative">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                    {product.isSoldOut && (
-                      <div className="absolute inset-0 bg-gray-500 bg-opacity-50 rounded-md flex items-center justify-center">
-                        <div className="text-xl font-bold text-white">품절</div>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -142,102 +95,62 @@ function StoreDetailPage() {
 
         {/* 가게 정보 탭 */}
         {activeTab === 'storeInfo' && (
-          <div className="p-4">
-            <div className="space-y-4">
-              <div className="border-b pb-2">
-                <h3 className="font-bold mb-1">기본 정보</h3>
-                <div className="flex items-center mb-1">
-                  <span className="text-gray-600 mr-2">📍</span>
-                  <p className="text-gray-600">{store.name}</p>
-                </div>
-                <div className="flex items-center mb-1">
-                  <span className="text-gray-600 mr-2">📞</span>
-                  <p className="text-gray-600">{store.phone}</p>
-                </div>
-                <div className="flex items-center mb-1">
-                  <span className="text-gray-600 mr-2">🏷️</span>
-                  <p className="text-gray-600">카테고리: {store.category}</p>
-                </div>
-              </div>
-
-              <div className="border-b pb-2">
-                <h3 className="font-bold mb-1">가게 소개</h3>
-                <p className="text-gray-600">
-                  안녕하세요, {store.name}입니다.
-                  <br />
-                  저희 가게는 {store.category}으로 주로 평일 7시경에
-                  <br />
-                  마감상품으로 남은 {store.category}을 등록합니다.
-                  <br />
-                  5시 이후에 미리 전화를 주시면 예약 가능하십니다.
-                  <br />그 외 문의 있으시면 연락주세요! ^^
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-bold mb-1">위치 정보</h3>
-                <div className="w-full h-40 bg-gray-200 rounded-md flex items-center justify-center">
-                  <p className="text-gray-500">지도가 표시되는 영역</p>
-                </div>
-              </div>
+          <div className="p-4 space-y-4">
+            <div className="border-b pb-2">
+              <h3 className="font-bold mb-1">기본 정보</h3>
+              <p className="text-gray-600">📍 {store.name}</p>
+              <p className="text-gray-600">📞 {store.phone}</p>
+              <p className="text-gray-600">🏷️ 카테고리: {store.category}</p>
             </div>
+
+            {/* 지도 추가 */}
+            <div>
+              <h3 className="font-bold mb-1">위치 정보</h3>
+              <Map center={{ lat: store.lat, lng: store.lng }} style={{ width: '100%', height: '250px' }} level={3}>
+                <MapMarker position={{ lat: store.lat, lng: store.lng }} title={store.name} />
+              </Map>
+            </div>
+
+            {/* ✅ 지도 아래에 주소 표시 및 복사 기능 추가 */}
+            <div
+              className="mt-2 text-center text-gray-700 cursor-pointer bg-gray-100 p-2 rounded-md hover:bg-gray-200 transition"
+              onClick={handleCopyClick}
+            >
+              {store.address || '주소 정보 없음'}
+            </div>
+
+            {/* ✅ 복사 성공 메시지 */}
+            {copySuccess && <p className="text-sm text-green-500 text-center mt-1">주소가 복사되었습니다!</p>}
           </div>
         )}
 
         {/* 리뷰 탭 */}
         {activeTab === 'reviews' && (
           <div className="p-4">
-            <div className="mb-4 text-center">
-              <h3 className="font-bold text-xl">리뷰 평균 별점</h3>
-              <div className="text-4xl font-bold mt-2">
-                {store.reviews.length > 0
-                  ? (
-                      store.reviews.reduce(
-                        (sum, review) => sum + review.rating,
-                        0,
-                      ) / store.reviews.length
-                    ).toFixed(1)
-                  : '0.0'}
-                <span className="text-xl text-gray-500">/5</span>
-              </div>
-            </div>
+            <h3 className="font-bold text-xl text-center mb-2">리뷰 평균 별점</h3>
+            <p className="text-4xl font-bold text-center">
+              {store.reviews.length
+                ? (store.reviews.reduce((sum, review) => sum + review.rating, 0) / store.reviews.length).toFixed(1)
+                : '0.0'}
+              <span className="text-xl text-gray-500">/5</span>
+            </p>
 
             {store.reviews.length > 0 ? (
-              <div className="space-y-4">
-                {store.reviews.map((review) => (
-                  <div key={review.id} className="border rounded-lg p-3">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="font-bold">{review.userName}</div>
-                      <div className="text-yellow-500 flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <span
-                            key={i}
-                            className={
-                              i < Math.floor(review.rating)
-                                ? 'text-yellow-400'
-                                : 'text-gray-300'
-                            }
-                          >
-                            ★
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-gray-600">{review.content}</p>
-                    <p className="text-xs text-gray-400 mt-2">{review.date}</p>
-                  </div>
-                ))}
-              </div>
+              store.reviews.map((review) => (
+                <div key={review.id} className="border rounded-lg p-3 mb-4">
+                  <p className="font-bold">{review.userName}</p>
+                  <p className="text-gray-600">{review.content}</p>
+                  <p className="text-xs text-gray-400 mt-2">{review.date}</p>
+                </div>
+              ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                아직 리뷰가 없습니다.
-              </div>
+              <p className="text-center py-8 text-gray-500">아직 리뷰가 없습니다.</p>
             )}
           </div>
         )}
 
-        {/* 연락하기 버튼 */}
-        <div className="p-4">
+       {/* 연락하기 버튼 */}
+       <div className="p-4">
           <button
             className="w-full py-3 bg-yellow-500 text-white font-bold rounded-lg"
             onClick={() => setShowPhonePopup(true)}

@@ -10,13 +10,13 @@ export const categories = [
   { id: 8, name: '기타', icon: '🛒' },
 ]
 
-// 현재 위치 (구름스퀘어)
+// 현재 위치 (제주도 구름스퀘어)
 export const currentPosition = {
   lat: 33.450705,
   lng: 126.570677,
 }
 
-// 가게 데이터
+// 가게 데이터 (제주도 구름스퀘어 근처로 위치 조정)
 export const stores = [
   {
     id: 1,
@@ -25,9 +25,10 @@ export const stores = [
     image: 'https://via.placeholder.com/150?text=Korean',
     distance: '0.3km',
     discount: '30%',
-    phone: '02-123-4567',
+    phone: '064-123-4567',
     lat: 33.450936,
     lng: 126.569477,
+    address: '제주특별자치도 제주시 중앙로 123',
     products: [
       {
         id: 1,
@@ -38,15 +39,6 @@ export const stores = [
         image: 'https://via.placeholder.com/100?text=PorkSoup',
         isSoldOut: false,
       },
-      {
-        id: 2,
-        name: '순대국밥',
-        originalPrice: 9000,
-        discountPrice: 6300,
-        discountRate: '30%',
-        image: 'https://via.placeholder.com/100?text=BloodSausageSoup',
-        isSoldOut: true,
-      },
     ],
     reviews: [
       {
@@ -55,13 +47,6 @@ export const stores = [
         rating: 4,
         content: '돼지국밥이 정말 맛있어요! 다음에 또 방문할게요.',
         date: '2023.05.15',
-      },
-      {
-        id: 2,
-        userName: '푸드러버',
-        rating: 5,
-        content: '가격도 저렴하고 양도 많아서 좋았습니다.',
-        date: '2023.05.10',
       },
     ],
   },
@@ -72,9 +57,10 @@ export const stores = [
     image: 'https://via.placeholder.com/150?text=Seafood',
     distance: '0.5km',
     discount: '20%',
-    phone: '02-234-5678',
+    phone: '064-234-5678',
     lat: 33.451393,
     lng: 126.571892,
+    address: '제주특별자치도 제주시 서해안로 456',
     products: [
       {
         id: 3,
@@ -85,25 +71,8 @@ export const stores = [
         image: 'https://via.placeholder.com/100?text=Sashimi',
         isSoldOut: false,
       },
-      {
-        id: 4,
-        name: '새우 튀김',
-        originalPrice: 12000,
-        discountPrice: 9600,
-        discountRate: '20%',
-        image: 'https://via.placeholder.com/100?text=Shrimp',
-        isSoldOut: false,
-      },
     ],
-    reviews: [
-      {
-        id: 3,
-        userName: '해산물러버',
-        rating: 5,
-        content: '생선회가 신선하고 맛있어요! 새우 튀김도 바삭하고 맛있습니다.',
-        date: '2023.05.18',
-      },
-    ],
+    reviews: [],
   },
   {
     id: 3,
@@ -112,9 +81,10 @@ export const stores = [
     image: 'https://via.placeholder.com/150?text=Snack',
     distance: '0.7km',
     discount: '15%',
-    phone: '02-345-6789',
+    phone: '064-345-6789',
     lat: 33.450432,
     lng: 126.572282,
+    address: '제주특별자치도 제주시 남쪽길 789',
     products: [
       {
         id: 5,
@@ -125,25 +95,8 @@ export const stores = [
         image: 'https://via.placeholder.com/100?text=Tteokbokki',
         isSoldOut: false,
       },
-      {
-        id: 6,
-        name: '김밥',
-        originalPrice: 3500,
-        discountPrice: 2975,
-        discountRate: '15%',
-        image: 'https://via.placeholder.com/100?text=Kimbap',
-        isSoldOut: false,
-      },
     ],
-    reviews: [
-      {
-        id: 4,
-        userName: '분식매니아',
-        rating: 4,
-        content: '떡볶이가 맛있어요! 소스가 일반 분식집과 달라요.',
-        date: '2023.05.20',
-      },
-    ],
+    reviews: [],
   },
   {
     id: 4,
@@ -152,38 +105,12 @@ export const stores = [
     image: 'https://via.placeholder.com/150?text=Meat',
     distance: '0.9km',
     discount: '25%',
-    phone: '02-456-7890',
+    phone: '064-456-7890',
     lat: 33.449857,
     lng: 126.569235,
-    products: [
-      {
-        id: 7,
-        name: '한우 등심',
-        originalPrice: 25000,
-        discountPrice: 18750,
-        discountRate: '25%',
-        image: 'https://via.placeholder.com/100?text=Beef',
-        isSoldOut: false,
-      },
-      {
-        id: 8,
-        name: '돼지 삼겹살',
-        originalPrice: 20000,
-        discountPrice: 15000,
-        discountRate: '25%',
-        image: 'https://via.placeholder.com/100?text=PorkBelly',
-        isSoldOut: false,
-      },
-    ],
-    reviews: [
-      {
-        id: 5,
-        userName: '고기러버',
-        rating: 5,
-        content: '고기 퀄리티가 정말 좋아요! 신선하고 맛있습니다.',
-        date: '2023.05.18',
-      },
-    ],
+    address: '제주특별자치도 제주시 동쪽길 101',
+    products: [],
+    reviews: [],
   },
   {
     id: 5,
@@ -192,38 +119,12 @@ export const stores = [
     image: 'https://via.placeholder.com/150?text=Fruits',
     distance: '1.1km',
     discount: '10%',
-    phone: '02-567-8901',
+    phone: '064-567-8901',
     lat: 33.452123,
     lng: 126.570563,
-    products: [
-      {
-        id: 9,
-        name: '사과 1kg',
-        originalPrice: 8000,
-        discountPrice: 7200,
-        discountRate: '10%',
-        image: 'https://via.placeholder.com/100?text=Apple',
-        isSoldOut: false,
-      },
-      {
-        id: 10,
-        name: '바나나 1송이',
-        originalPrice: 5000,
-        discountPrice: 4500,
-        discountRate: '10%',
-        image: 'https://via.placeholder.com/100?text=Banana',
-        isSoldOut: false,
-      },
-    ],
-    reviews: [
-      {
-        id: 6,
-        userName: '과일사랑',
-        rating: 4,
-        content: '사과가 신선하고 맛있어요! 바나나도 달고 맛있습니다.',
-        date: '2023.05.21',
-      },
-    ],
+    address: '제주특별자치도 제주시 북쪽길 202',
+    products: [],
+    reviews: [],
   },
   {
     id: 6,
@@ -232,46 +133,12 @@ export const stores = [
     image: 'https://via.placeholder.com/150?text=Cafe',
     distance: '1.3km',
     discount: '15%',
-    phone: '02-678-9012',
+    phone: '064-678-9012',
     lat: 33.450378,
     lng: 126.574585,
-    products: [
-      {
-        id: 11,
-        name: '아메리카노',
-        originalPrice: 4500,
-        discountPrice: 3825,
-        discountRate: '15%',
-        image: 'https://via.placeholder.com/100?text=Americano',
-        isSoldOut: false,
-      },
-      {
-        id: 12,
-        name: '치즈케이크',
-        originalPrice: 6000,
-        discountPrice: 5100,
-        discountRate: '15%',
-        image: 'https://via.placeholder.com/100?text=Cheesecake',
-        isSoldOut: false,
-      },
-    ],
-    reviews: [
-      {
-        id: 7,
-        userName: '카페홀릭',
-        rating: 5,
-        content:
-          '사장님이 정말 예뻐요!!! 케이크가 정말 맛있어요! 커피와 함께 먹으니 더 맛있네요.',
-        date: '2023.05.22',
-      },
-      {
-        id: 8,
-        userName: '디저트러버',
-        rating: 4,
-        content: '가격 대비 퀄리티가 좋아요. 다양한 디저트가 있어서 좋습니다.',
-        date: '2023.05.19',
-      },
-    ],
+    address: '제주특별자치도 제주시 카페거리 303',
+    products: [],
+    reviews: [],
   },
   {
     id: 7,
@@ -280,29 +147,12 @@ export const stores = [
     image: 'https://via.placeholder.com/150?text=Others',
     distance: '1.5km',
     discount: '5%',
-    phone: '02-789-0123',
+    phone: '064-789-0123',
     lat: 33.448662,
     lng: 126.571738,
-    products: [
-      {
-        id: 13,
-        name: '즉석 도시락',
-        originalPrice: 7000,
-        discountPrice: 6650,
-        discountRate: '5%',
-        image: 'https://via.placeholder.com/100?text=Lunchbox',
-        isSoldOut: false,
-      },
-    ],
-    reviews: [
-      {
-        id: 9,
-        userName: '알뜰쇼핑',
-        rating: 3,
-        content: '가격은 저렴한데 품질이 조금 아쉬워요.',
-        date: '2023.05.17',
-      },
-    ],
+    address: '제주특별자치도 제주시 도시락길 404',
+    products: [],
+    reviews: [],
   },
   {
     id: 8,
@@ -311,38 +161,11 @@ export const stores = [
     image: 'https://via.placeholder.com/150?text=Korean',
     distance: '0.8km',
     discount: '25%',
-    phone: '02-890-1234',
+    phone: '064-890-1234',
     lat: 33.451768,
     lng: 126.568975,
-    products: [
-      {
-        id: 14,
-        name: '제주 흑돼지 구이',
-        originalPrice: 20000,
-        discountPrice: 15000,
-        discountRate: '25%',
-        image: 'https://via.placeholder.com/100?text=BlackPork',
-        isSoldOut: false,
-      },
-      {
-        id: 15,
-        name: '고등어 구이',
-        originalPrice: 15000,
-        discountPrice: 11250,
-        discountRate: '25%',
-        image: 'https://via.placeholder.com/100?text=Mackerel',
-        isSoldOut: false,
-      },
-    ],
-    reviews: [
-      {
-        id: 10,
-        userName: '제주도러버',
-        rating: 5,
-        content:
-          '제주 흑돼지 구이가 정말 맛있어요! 고등어 구이도 신선하고 맛있습니다.',
-        date: '2023.05.23',
-      },
-    ],
+    address: '제주특별자치도 제주시 흑돼지거리 505',
+    products: [],
+    reviews: [],
   },
 ]
