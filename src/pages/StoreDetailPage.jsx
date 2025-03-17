@@ -41,12 +41,18 @@ function StoreDetailPage() {
     <div className="flex flex-col h-full">
       <Header title={store.name} />
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto scroll-container">
         {/* 가게 이미지 */}
-        <img src={store.image} alt={store.name} className="w-full h-48 object-cover" />
+        <img
+          src={store.image}
+          alt={store.name}
+          className="w-full h-48 object-cover"
+        />
 
         {/* 가게 이름 */}
-        <h2 className="text-xl font-bold text-center mt-2 mb-4">{store.name}</h2>
+        <h2 className="text-xl font-bold text-center mt-2 mb-4">
+          {store.name}
+        </h2>
 
         {/* 탭 메뉴 */}
         <div className="flex border-b">
@@ -54,7 +60,9 @@ function StoreDetailPage() {
             <button
               key={tab}
               className={`flex-1 py-2 text-center font-medium ${
-                activeTab === tab ? 'border-b-2 border-gray-700 text-gray-700' : 'text-gray-500'
+                activeTab === tab
+                  ? 'border-b-2 border-gray-700 text-gray-700'
+                  : 'text-gray-500'
               }`}
               onClick={() => setActiveTab(tab)}
             >
@@ -68,20 +76,30 @@ function StoreDetailPage() {
         {/* 상품 정보 탭 */}
         {activeTab === 'products' && (
           <div className="p-4">
-            <h3 className="font-bold mb-2">마감 할인 {store.products.length}개</h3>
+            <h3 className="font-bold mb-2">
+              마감 할인 {store.products.length}개
+            </h3>
             {store.products.map((product) => (
-              <div key={product.id} className="border rounded-lg p-3 mb-4 relative flex">
+              <div
+                key={product.id}
+                className="border rounded-lg p-3 mb-4 relative flex"
+              >
                 <div className="flex-1">
                   <h4 className="font-bold">{product.name}</h4>
                   <p className="text-sm line-through text-gray-400">
                     {product.originalPrice.toLocaleString()}원
                   </p>
                   <p className="text-gray-700 font-bold">
-                    {product.discountPrice.toLocaleString()}원 ({product.discountRate})
+                    {product.discountPrice.toLocaleString()}원 (
+                    {product.discountRate})
                   </p>
                 </div>
                 <div className="w-24 h-24 bg-gray-200 rounded-md flex items-center justify-center relative">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-md" />
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover rounded-md"
+                  />
                   {product.isSoldOut && (
                     <div className="absolute inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
                       <span className="text-xl font-bold text-white">품절</span>
@@ -106,8 +124,15 @@ function StoreDetailPage() {
             {/* 지도 추가 */}
             <div>
               <h3 className="font-bold mb-1">위치 정보</h3>
-              <Map center={{ lat: store.lat, lng: store.lng }} style={{ width: '100%', height: '250px' }} level={3}>
-                <MapMarker position={{ lat: store.lat, lng: store.lng }} title={store.name} />
+              <Map
+                center={{ lat: store.lat, lng: store.lng }}
+                style={{ width: '100%', height: '250px' }}
+                level={3}
+              >
+                <MapMarker
+                  position={{ lat: store.lat, lng: store.lng }}
+                  title={store.name}
+                />
               </Map>
             </div>
 
@@ -120,17 +145,28 @@ function StoreDetailPage() {
             </div>
 
             {/* ✅ 복사 성공 메시지 */}
-            {copySuccess && <p className="text-sm text-green-500 text-center mt-1">주소가 복사되었습니다!</p>}
+            {copySuccess && (
+              <p className="text-sm text-green-500 text-center mt-1">
+                주소가 복사되었습니다!
+              </p>
+            )}
           </div>
         )}
 
         {/* 리뷰 탭 */}
         {activeTab === 'reviews' && (
           <div className="p-4">
-            <h3 className="font-bold text-xl text-center mb-2">리뷰 평균 별점</h3>
+            <h3 className="font-bold text-xl text-center mb-2">
+              리뷰 평균 별점
+            </h3>
             <p className="text-4xl font-bold text-center">
               {store.reviews.length
-                ? (store.reviews.reduce((sum, review) => sum + review.rating, 0) / store.reviews.length).toFixed(1)
+                ? (
+                    store.reviews.reduce(
+                      (sum, review) => sum + review.rating,
+                      0,
+                    ) / store.reviews.length
+                  ).toFixed(1)
                 : '0.0'}
               <span className="text-xl text-gray-500">/5</span>
             </p>
@@ -144,13 +180,15 @@ function StoreDetailPage() {
                 </div>
               ))
             ) : (
-              <p className="text-center py-8 text-gray-500">아직 리뷰가 없습니다.</p>
+              <p className="text-center py-8 text-gray-500">
+                아직 리뷰가 없습니다.
+              </p>
             )}
           </div>
         )}
 
-       {/* 연락하기 버튼 */}
-       <div className="p-4">
+        {/* 연락하기 버튼 */}
+        <div className="p-4">
           <button
             className="w-full py-3 bg-yellow-500 text-white font-bold rounded-lg"
             onClick={() => setShowPhonePopup(true)}
