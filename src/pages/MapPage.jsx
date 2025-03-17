@@ -176,7 +176,7 @@ function MapPage() {
         )}
 
         {/* 마감 할인 필터 */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
           <button
             className={`px-4 py-2 rounded-full text-sm flex items-center gap-2 ${
               showDiscountOnly
@@ -194,7 +194,7 @@ function MapPage() {
         <MapController onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
 
         {/* 가게 목록 */}
-        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-white rounded-t-2xl shadow-lg overflow-y-auto">
+        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-white rounded-t-2xl shadow-lg overflow-y-auto z-10 scroll-container">
           <div className="p-4">
             <h3 className="font-bold mb-2">
               주변 가게 ({filteredStores.length})
