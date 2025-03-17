@@ -36,7 +36,7 @@ export const stores = [
         originalPrice: 10000,
         discountPrice: 7000,
         discountRate: '30%',
-        image: 'https://via.placeholder.com/100?text=PorkSoup',
+        image: 'https://source.unsplash.com/150x150/?koreanfood',
         isSoldOut: false,
       },
     ],
