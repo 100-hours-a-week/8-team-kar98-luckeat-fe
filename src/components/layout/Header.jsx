@@ -15,7 +15,10 @@ function Header() {
           ←
         </button>
       )}
-      <h1 className="text-xl font-semibold text-yellow-500 w-full text-center">
+      <h1
+        className="text-2xl font-bold text-yellow-500 w-full text-center"
+        onClick={() => navigate(0)}
+      >
         Luckeat
       </h1>
     </header>

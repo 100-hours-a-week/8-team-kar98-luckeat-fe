@@ -179,11 +179,6 @@ function StoreDetailPage() {
                 <div className="w-full h-40 bg-gray-200 rounded-md flex items-center justify-center">
                   <p className="text-gray-500">지도가 표시되는 영역</p>
                 </div>
-                <div className="mt-2 text-center">
-                  <button className="text-blue-500 text-sm">
-                    🗺️ 카카오맵으로 보기
-                  </button>
-                </div>
               </div>
             </div>
           </div>

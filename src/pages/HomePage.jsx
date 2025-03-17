@@ -100,7 +100,12 @@ function HomePage() {
     <div className="flex flex-col h-full">
       {/* 헤더 */}
       <div className="px-4 py-3 border-b flex justify-center items-center bg-white sticky top-0 z-20">
-        <h1 className="text-2xl font-bold text-yellow-500">Luckeat</h1>
+        <h1
+          className="text-2xl font-bold text-yellow-500"
+          onClick={() => navigate(0)}
+        >
+          Luckeat
+        </h1>
         <div className="absolute right-4 text-sm">
           <div className="flex space-x-2">
             <button
