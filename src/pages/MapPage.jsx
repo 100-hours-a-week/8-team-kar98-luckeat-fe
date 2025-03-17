@@ -200,7 +200,7 @@ function MapPage() {
               주변 가게 ({filteredStores.length})
             </h3>
             <div className="space-y-3">
-              {filteredStores.slice(0, 3).map((store) => (
+              {filteredStores.map((store) => (
                 <div
                   key={store.id}
                   className="flex items-center p-2 border rounded-lg"
