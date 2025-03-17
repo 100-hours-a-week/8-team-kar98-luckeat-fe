@@ -27,7 +27,8 @@ function StoreMarker({ store, isSelected, onClick }) {
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.target.onerror = null
-                    e.target.src = 'https://via.placeholder.com/150/CCCCCC?text=이미지없음'
+                    e.target.src =
+                      'https://via.placeholder.com/150/CCCCCC?text=이미지없음'
                   }}
                 />
               </div>
