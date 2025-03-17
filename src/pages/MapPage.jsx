@@ -26,16 +26,24 @@ function MapPage() {
       } else {
         console.log('카카오맵 SDK를 로드합니다...')
         const script = document.createElement('script')
-        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=053712efa761d6d8afaa725cfb56bf0e&libraries=services,clusterer,drawing&autoload=false`
+        
+        // API 키 설정
+        const KAKAO_API_KEY = import.meta.env.VITE_KAKAO_API_KEY
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_API_KEY}&libraries=services,clusterer,drawing&autoload=false`
         script.async = true
-
+        
         script.onload = () => {
           window.kakao.maps.load(() => {
             console.log('카카오맵 로드 완료')
             setMapLoaded(true)
           })
         }
-
+        
+        script.onerror = (error) => {
+          console.error('카카오맵 로드 실패:', error)
+          alert('지도 로딩에 실패했습니다. 카카오 개발자 센터에서 현재 도메인이 등록되어 있는지 확인해주세요.')
+        }
+        
         document.head.appendChild(script)
       }
     }
@@ -203,7 +211,7 @@ function MapPage() {
                       className="w-full h-full object-cover rounded-md"
                       onError={(e) => {
                         e.target.onerror = null
-                        e.target.src = 'https://via.placeholder.com/150/CCCCCC?text=이미지없음'
+                        e.target.src = 'https://placehold.co/150?text=이미지없음'
                       }}
                     />
                   </div>
