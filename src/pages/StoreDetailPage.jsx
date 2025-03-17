@@ -3,21 +3,21 @@ import { useParams } from 'react-router-dom'
 import Navigation from '../components/layout/Navigation'
 import { stores } from '../data/storeData'
 import Header from '../components/layout/Header'
-import { Map, MapMarker } from 'react-kakao-maps-sdk' // ✅ 카카오맵 추가
+import { Map, MapMarker } from 'react-kakao-maps-sdk' //카카오맵 추가
 
 function StoreDetailPage() {
   const { id } = useParams()
   const [activeTab, setActiveTab] = useState('products')
   const [store, setStore] = useState(null)
   const [showPhonePopup, setShowPhonePopup] = useState(false)
-  const [copySuccess, setCopySuccess] = useState(false) // ✅ 주소 복사 성공 상태 추가
+  const [copySuccess, setCopySuccess] = useState(false) // 주소 복사 성공 상태 추가
 
   useEffect(() => {
     const foundStore = stores.find((s) => s.id === parseInt(id, 10)) // ✅ parseInt 수정
     if (foundStore) setStore(foundStore)
   }, [id])
 
-  // ✅ 주소 복사 기능 추가
+  //  주소 복사 기능 추가
   const handleCopyClick = () => {
     if (!store?.address) return
     navigator.clipboard
@@ -120,6 +120,19 @@ function StoreDetailPage() {
               <p className="text-gray-600">📞 {store.phone}</p>
               <p className="text-gray-600">🏷️ 카테고리: {store.category}</p>
             </div>
+            {/*  가게 소개 복원 */}
+            <div className="border-b pb-2">
+              <h3 className="font-bold mb-1">가게 소개</h3>
+              <p className="text-gray-600">
+                안녕하세요, {store.name}입니다.
+                <br />
+                저희 가게는 {store.category} 전문점이며,
+                <br />
+                신선한 재료로 최상의 맛을 제공합니다.
+                <br />
+                많은 방문 부탁드립니다!
+              </p>
+            </div>
 
             {/* 지도 추가 */}
             <div>
@@ -136,7 +149,7 @@ function StoreDetailPage() {
               </Map>
             </div>
 
-            {/* ✅ 지도 아래에 주소 표시 및 복사 기능 추가 */}
+            {/* 지도 아래에 주소 표시 및 복사 기능 추가 */}
             <div
               className="mt-2 text-center text-gray-700 cursor-pointer bg-gray-100 p-2 rounded-md hover:bg-gray-200 transition"
               onClick={handleCopyClick}
@@ -144,7 +157,7 @@ function StoreDetailPage() {
               {store.address || '주소 정보 없음'}
             </div>
 
-            {/* ✅ 복사 성공 메시지 */}
+            {/* 복사 성공 메시지 */}
             {copySuccess && (
               <p className="text-sm text-green-500 text-center mt-1">
                 주소가 복사되었습니다!

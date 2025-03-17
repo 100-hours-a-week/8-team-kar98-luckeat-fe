@@ -17,7 +17,7 @@ function Header() {
       )}
       <h1
         className="text-2xl font-bold text-yellow-500 w-full text-center"
-        onClick={() => navigate(0)}
+        onClick={() => navigate('/')}
       >
         Luckeat
       </h1>
