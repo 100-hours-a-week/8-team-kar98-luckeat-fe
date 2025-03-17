@@ -36,13 +36,25 @@
         "preset": "conventionalcommits",
         "presetConfig": {
           "types": [
-            { "type": "build", "section": "⚙️ SYSTEM BUILD & EXTERNAL PACKAGES", "hidden": true },
+            {
+              "type": "build",
+              "section": "⚙️ SYSTEM BUILD & EXTERNAL PACKAGES",
+              "hidden": true
+            },
             { "type": "chore", "section": "📦 CHORES", "hidden": true },
-            { "type": "content", "section": "📝 CONTENT UPDATES", "hidden": false },
+            {
+              "type": "content",
+              "section": "📝 CONTENT UPDATES",
+              "hidden": false
+            },
             { "type": "docs", "section": "📚 DOCUMENTATION", "hidden": false },
             { "type": "feat", "section": "🚀 NEW FEATURES", "hidden": false },
             { "type": "fix", "section": "🐛 BUG FIXES", "hidden": false },
-            { "type": "refactor", "section": "♻️ REFACTORING", "hidden": false },
+            {
+              "type": "refactor",
+              "section": "♻️ REFACTORING",
+              "hidden": false
+            },
             { "type": "style", "section": "🎨 STYLES", "hidden": false },
             { "type": "test", "section": "✅ TESTING", "hidden": true },
             { "type": "deploy", "section": "🚀 DEPLOYMENTS", "hidden": false }
