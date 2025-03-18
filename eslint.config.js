@@ -10,7 +10,7 @@ export default [
   js.configs.recommended,
   reactRecommended,
   {
-    files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     ignores: ['dist/**/*'],
     plugins: {
       prettier: eslintPluginPrettier,
@@ -25,9 +25,6 @@ export default [
           jsx: true,
         },
       },
-      globals: {
-        ...globals.browser,
-      },
     },
     settings: {
       react: {
@@ -37,8 +34,7 @@ export default [
     rules: {
       ...eslintConfigPrettier.rules,
       'prettier/prettier': 'error',
-      'react/jsx-uses-react': 'error',
-      'react/jsx-uses-vars': 'error',
+      'react/react-in-jsx-scope': 'off',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
     },
