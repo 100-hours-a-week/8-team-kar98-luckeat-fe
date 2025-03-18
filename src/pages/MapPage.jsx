@@ -20,37 +20,30 @@ function MapPage() {
 
   // 카카오맵 로드 확인
   useEffect(() => {
-    const loadKakaoMap = () => {
+    // 카카오맵이 로드되었는지 주기적으로 확인
+    const checkKakaoMap = () => {
+      console.log('카카오맵 확인 중...', window.kakao);
       if (window.kakao && window.kakao.maps) {
+        console.log('카카오맵 로드 완료', window.kakao.maps);
         setMapLoaded(true)
-      } else {
-        console.log('카카오맵 SDK를 로드합니다...')
-        const script = document.createElement('script')
-
-        // API 키 설정
-        const KAKAO_API_KEY = import.meta.env.VITE_KAKAO_API_KEY
-        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_API_KEY}&libraries=services,clusterer,drawing&autoload=false`
-        script.async = true
-
-        script.onload = () => {
-          window.kakao.maps.load(() => {
-            console.log('카카오맵 로드 완료')
-            setMapLoaded(true)
-          })
-        }
-
-        script.onerror = (error) => {
-          console.error('카카오맵 로드 실패:', error)
-          alert(
-            '지도 로딩에 실패했습니다. 카카오 개발자 센터에서 현재 도메인이 등록되어 있는지 확인해주세요.',
-          )
-        }
-
-        document.head.appendChild(script)
+        return true
       }
+      return false
     }
 
-    loadKakaoMap()
+    // 초기 확인
+    if (checkKakaoMap()) return
+
+    // 카카오맵이 로드될 때까지 주기적으로 확인
+    const interval = setInterval(() => {
+      console.log('카카오맵 로드 체크...');
+      if (checkKakaoMap()) {
+        clearInterval(interval)
+      }
+    }, 500)
+
+    // 컴포넌트 언마운트 시 인터벌 정리
+    return () => clearInterval(interval)
   }, [])
 
   // 할인 필터와 카테고리 변경 시 가게 목록 필터링
@@ -139,14 +132,14 @@ function MapPage() {
       {/* 지도 영역 */}
       <div
         className="flex-1 relative bg-gray-100 overflow-hidden"
-        style={{ minHeight: '400px' }}
+        style={{ minHeight: '400px', border: '2px solid red' }}
       >
         {/* 카카오 지도 */}
         {mapLoaded ? (
           <Map
             center={mapCenter}
             level={mapLevel}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', border: '2px solid blue' }}
             ref={mapRef}
           >
             {/* 현재 위치 마커 */}
@@ -171,7 +164,7 @@ function MapPage() {
           </Map>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <p>지도를 로딩 중입니다...</p>
+            <p>지도를 로딩 중입니다... (카카오맵 객체: {window.kakao ? '있음' : '없음'})</p>
           </div>
         )}
 
@@ -214,7 +207,7 @@ function MapPage() {
                       onError={(e) => {
                         e.target.onerror = null
                         e.target.src =
-                          'https://placehold.co/150?text=이미지없음'
+                          'https://via.placeholder.com/150?text=이미지없음'
                       }}
                     />
                   </div>
