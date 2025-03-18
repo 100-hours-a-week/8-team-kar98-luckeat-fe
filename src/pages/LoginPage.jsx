@@ -10,9 +10,11 @@ function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
+    setError('')
 
     // 간단한 유효성 검사
     if (!email || !password) {
@@ -20,14 +22,21 @@ function LoginPage() {
       return
     }
 
-    // 실제 로그인 처리 (지금은 가상 데이터로 처리)
-    login({
-      email,
-      nickname: email.split('@')[0], // 이메일의 @ 앞부분을 닉네임으로 사용
-    })
-
-    // 홈페이지로 이동
-    navigate('/home')
+    try {
+      setLoading(true)
+      const result = await login({ email, password })
+      
+      if (result.success) {
+        navigate('/home')
+      } else {
+        setError(result.message || '로그인에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('로그인 오류:', error)
+      setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -38,79 +47,62 @@ function LoginPage() {
       <div className="flex-1 p-4">
         {/* 로그인 폼 */}
         <form onSubmit={handleLogin} className="space-y-6 mt-8">
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-
-          <div className="border rounded-lg p-4">
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-1">
-                이메일 주소
-              </label>
-              <input
-                type="email"
-                placeholder="이메일 주소를 입력해주세요."
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 bg-gray-100 rounded-lg"
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                (예: example@example.com)
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">비밀번호</label>
-              <input
-                type="password"
-                placeholder="비밀번호를 입력해주세요."
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 bg-gray-100 rounded-lg"
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                비밀번호는 8자 이상, 20자 이하이며, 영어 소문자, 숫자를 각각
-                최소 1개 포함해야 합니다.
-              </p>
-            </div>
+          {/* 이메일 입력 */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              이메일
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
+              placeholder="이메일을 입력하세요"
+              required
+            />
           </div>
 
+          {/* 비밀번호 입력 */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              비밀번호
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
+              placeholder="비밀번호를 입력하세요"
+              required
+            />
+          </div>
+
+          {/* 에러 메시지 */}
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+
+          {/* 로그인 버튼 */}
           <button
             type="submit"
-            className="w-full py-3 bg-yellow-500 text-white font-bold rounded-lg"
+            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+            disabled={loading}
           >
-            로그인
+            {loading ? '로그인 중...' : '로그인'}
           </button>
+
+          {/* 회원가입 링크 */}
+          <div className="text-center">
+            <span className="text-sm text-gray-600">계정이 없으신가요? </span>
+            <button
+              type="button"
+              onClick={() => navigate('/signup')}
+              className="text-sm text-yellow-600 hover:text-yellow-500"
+            >
+              회원가입
+            </button>
+          </div>
         </form>
-
-        <div className="flex justify-between mt-4">
-          <button
-            className="text-sm text-gray-500"
-            onClick={() => navigate('/find-password')}
-          >
-            비밀번호 찾기
-          </button>
-          <button
-            className="text-sm text-gray-500"
-            onClick={() => navigate('/signup')}
-          >
-            회원가입
-          </button>
-        </div>
-
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-600 mb-2">아직 가입 전이신가요?</p>
-          <button
-            className="px-4 py-2 bg-yellow-500 text-white rounded-lg"
-            onClick={() => navigate('/signup')}
-          >
-            가입하기
-          </button>
-        </div>
       </div>
 
       <Navigation />
