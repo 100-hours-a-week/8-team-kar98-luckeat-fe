@@ -22,9 +22,9 @@ function MapPage() {
   useEffect(() => {
     // 카카오맵이 로드되었는지 주기적으로 확인
     const checkKakaoMap = () => {
-      console.log('카카오맵 확인 중...', window.kakao);
+      console.log('카카오맵 확인 중...', window.kakao)
       if (window.kakao && window.kakao.maps) {
-        console.log('카카오맵 로드 완료', window.kakao.maps);
+        console.log('카카오맵 로드 완료', window.kakao.maps)
         setMapLoaded(true)
         return true
       }
@@ -36,7 +36,7 @@ function MapPage() {
 
     // 카카오맵이 로드될 때까지 주기적으로 확인
     const interval = setInterval(() => {
-      console.log('카카오맵 로드 체크...');
+      console.log('카카오맵 로드 체크...')
       if (checkKakaoMap()) {
         clearInterval(interval)
       }
@@ -164,7 +164,10 @@ function MapPage() {
           </Map>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <p>지도를 로딩 중입니다... (카카오맵 객체: {window.kakao ? '있음' : '없음'})</p>
+            <p>
+              지도를 로딩 중입니다... (카카오맵 객체:{' '}
+              {window.kakao ? '있음' : '없음'})
+            </p>
           </div>
         )}
 

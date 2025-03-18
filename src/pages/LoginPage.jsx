@@ -25,7 +25,7 @@ function LoginPage() {
     try {
       setLoading(true)
       const result = await login({ email, password })
-      
+
       if (result.success) {
         navigate('/home')
       } else {
@@ -49,7 +49,10 @@ function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-6 mt-8">
           {/* 이메일 입력 */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               이메일
             </label>
             <input
@@ -65,7 +68,10 @@ function LoginPage() {
 
           {/* 비밀번호 입력 */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               비밀번호
             </label>
             <input

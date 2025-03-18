@@ -22,7 +22,8 @@ export const stores = [
     id: 1,
     name: '에드윈 부산 돼지국밥',
     category: '한식',
-    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=150&h=150&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=150&h=150&fit=crop',
     distance: '0.3km',
     discount: '30%',
     phone: '064-123-4567',
@@ -54,7 +55,8 @@ export const stores = [
     id: 2,
     name: '현현 수산물',
     category: '수산',
-    image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=150&h=150&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=150&h=150&fit=crop',
     distance: '0.5km',
     discount: '20%',
     phone: '064-234-5678',
@@ -68,7 +70,8 @@ export const stores = [
         originalPrice: 30000,
         discountPrice: 24000,
         discountRate: '20%',
-        image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=100&h=100&fit=crop',
+        image:
+          'https://images.unsplash.com/photo-1553621042-f6e147245754?w=100&h=100&fit=crop',
         isSoldOut: false,
       },
     ],
@@ -78,7 +81,8 @@ export const stores = [
     id: 3,
     name: '시에나 분식',
     category: '분식',
-    image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=150&h=150&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=150&h=150&fit=crop',
     distance: '0.7km',
     discount: '15%',
     phone: '064-345-6789',
@@ -92,7 +96,8 @@ export const stores = [
         originalPrice: 5000,
         discountPrice: 4250,
         discountRate: '15%',
-        image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=100&h=100&fit=crop',
+        image:
+          'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=100&h=100&fit=crop',
         isSoldOut: false,
       },
     ],
@@ -102,7 +107,8 @@ export const stores = [
     id: 4,
     name: '코비 정육점',
     category: '정육',
-    image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=150&h=150&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=150&h=150&fit=crop',
     distance: '0.9km',
     discount: '25%',
     phone: '064-456-7890',
@@ -116,7 +122,8 @@ export const stores = [
     id: 5,
     name: '구름 청과',
     category: '야채/과일',
-    image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=150&h=150&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=150&h=150&fit=crop',
     distance: '1.1km',
     discount: '10%',
     phone: '064-567-8901',
@@ -130,7 +137,8 @@ export const stores = [
     id: 6,
     name: '에이븐 카페',
     category: '카페/디저트',
-    image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=150&h=150&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=150&h=150&fit=crop',
     distance: '1.3km',
     discount: '15%',
     phone: '064-678-9012',
@@ -144,7 +152,8 @@ export const stores = [
     id: 7,
     name: '카부캠 도시락 가게',
     category: '기타',
-    image: 'https://images.unsplash.com/photo-1530649159659-1e2c1f0f5ac7?w=150&h=150&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1530649159659-1e2c1f0f5ac7?w=150&h=150&fit=crop',
     distance: '1.5km',
     discount: '5%',
     phone: '064-789-0123',
@@ -158,7 +167,8 @@ export const stores = [
     id: 8,
     name: '제주도 한식',
     category: '한식',
-    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=150&h=150&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=150&h=150&fit=crop',
     distance: '0.8km',
     discount: '25%',
     phone: '064-890-1234',
