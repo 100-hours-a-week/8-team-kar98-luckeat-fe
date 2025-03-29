@@ -51,25 +51,13 @@ function AuthWrapper({ children }) {
   const location = useLocation()
 
   useEffect(() => {
-    // 현재 경로가 인증이 필요하지 않은 경로인지 확인
-    const publicPaths = ['/login', '/signup', '/', '/home', '/map']
-    const isPublicPath = publicPaths.includes(location.pathname)
-
-    // 인증이 필요한 경로에서만 토큰 유효성 검사
-    if (!isPublicPath) {
-      const isValid = checkCurrentAuthStatus()
-
-      // 유효하지 않은 토큰을 가진 경우 로그인 페이지로 리다이렉션
-      if (!isValid && location.pathname !== '/login') {
-        navigate('/login', {
-          replace: true,
-          state: {
-            from: location.pathname,
-            message: '로그인이 필요하거나 세션이 만료되었습니다.',
-          },
-        })
-      }
+    // 모든 사용자가 모든 페이지에 접근할 수 있도록 변경
+    // 단, 토큰이 있는 경우 토큰 유효성 검사는 그대로 수행 (로그인 상태 유지용)
+    if (localStorage.getItem('accessToken')) {
+      checkCurrentAuthStatus()
     }
+    // 주의: 이 변경으로 모든 사용자가 모든 페이지에 접근할 수 있게 됩니다.
+    // 필요한 경우 원래 코드로 되돌리세요.
   }, [location.pathname, checkCurrentAuthStatus, navigate, location])
 
   return children
@@ -89,7 +77,10 @@ function AppRoutes() {
         <Route path="/store/:id" element={<StoreDetailPage />} />
         <Route path="/reviews" element={<ReviewManagementPage />} />
         <Route path="/edit-profile" element={<EditProfilePage />} />
-        <Route path="/store/:storeId/products" element={<ProductManagementPage />} />
+        <Route
+          path="/store/:storeId/products"
+          element={<ProductManagementPage />}
+        />
         <Route path="/edit-store" element={<EditStorePage />} />
       </Routes>
     </AuthWrapper>

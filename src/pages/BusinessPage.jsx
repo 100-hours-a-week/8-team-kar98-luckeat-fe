@@ -9,7 +9,7 @@ import StoreCard from '../components/store/StoreCard'
 
 function BusinessPage() {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user, logout, isLoggedIn } = useAuth()
   const [userData, setUserData] = useState(null)
   const [storeData, setStoreData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -17,22 +17,54 @@ function BusinessPage() {
 
   // 사용자 정보와 가게 정보 가져오기
   useEffect(() => {
+    // 기존 코드 주석 처리
+    // const fetchData = async () => {
+    //   try {
+    //     setLoading(true)
+
+    //     // 사용자 정보 가져오기
+    //     const userResponse = await getUserInfo()
+    //     if (userResponse.success) {
+    //       setUserData(userResponse.data)
+    //     }
+
+    //     // 가게 정보 가져오기
+    //     const storeResponse = await getMyStore()
+    //     if (storeResponse.success) {
+    //       setStoreData(storeResponse.data)
+    //       console.log('가게 정보:', storeResponse.data)
+    //       console.log('가게 ID 속성:', Object.keys(storeResponse.data))
+    //     }
+    //   } catch (error) {
+    //     console.error('데이터 로딩 중 오류:', error)
+    //   } finally {
+    //     setLoading(false)
+    //   }
+    // }
+
+    // if (user) {
+    //   fetchData()
+    // }
+    
+    // 새로운 코드: 로그인 상태 확인 후 데이터 가져오기
     const fetchData = async () => {
       try {
         setLoading(true)
 
-        // 사용자 정보 가져오기
-        const userResponse = await getUserInfo()
-        if (userResponse.success) {
-          setUserData(userResponse.data)
-        }
+        if (isLoggedIn && user) {
+          // 사용자 정보 가져오기
+          const userResponse = await getUserInfo()
+          if (userResponse.success) {
+            setUserData(userResponse.data)
+          }
 
-        // 가게 정보 가져오기
-        const storeResponse = await getMyStore()
-        if (storeResponse.success) {
-          setStoreData(storeResponse.data)
-          console.log('가게 정보:', storeResponse.data)
-          console.log('가게 ID 속성:', Object.keys(storeResponse.data))
+          // 가게 정보 가져오기
+          const storeResponse = await getMyStore()
+          if (storeResponse.success) {
+            setStoreData(storeResponse.data)
+            console.log('가게 정보:', storeResponse.data)
+            console.log('가게 ID 속성:', Object.keys(storeResponse.data))
+          }
         }
       } catch (error) {
         console.error('데이터 로딩 중 오류:', error)
@@ -41,10 +73,12 @@ function BusinessPage() {
       }
     }
 
-    if (user) {
-      fetchData()
+    fetchData()
+    // 로그인하지 않은 경우 로딩 상태 해제
+    if (!isLoggedIn) {
+      setLoading(false)
     }
-  }, [user])
+  }, [user, isLoggedIn])
 
   const handleLogout = async () => {
     try {
@@ -76,77 +110,109 @@ function BusinessPage() {
           </div>
         ) : (
           <>
-            {/* 사업자 페이지 제목 */}
-            <div className="p-6 text-center">
-              <h1 className="text-3xl font-bold text-gray-800">
-                사업자 페이지
-              </h1>
-            </div>
-            
-            {/* 가게 정보 카드 */}
-            {storeData ? (
-              <div className="px-4 mb-6">
-                <h2 className="text-xl font-bold text-gray-700 mb-3">
-                  내 가게 정보
-                </h2>
-                <StoreCard store={storeData} />
-              </div>
-            ) : (
-              <div className="px-4 py-6 mb-6 bg-gray-100 rounded-lg mx-4 text-center">
-                <p className="text-gray-600 mb-3">
-                  등록된 가게 정보가 없습니다.
-                </p>
-                <button
-                  className="py-2 px-4 bg-[#F7B32B] hover:bg-[#E09D18] text-white font-bold rounded transition-colors"
-                  onClick={() => navigate('/register-store')}
-                >
-                  가게 등록하기
-                </button>
-              </div>
-            )}
-            
-            <div className="mt-6">
-              {/* 메뉴 목록 */}
-              <div className="p-4 space-y-4">
-                <div className="border-b pb-2">
-                  <button
-                    className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
-                    onClick={() => storeData && navigate(`/store/${storeData.id}/products`)}
-                    disabled={!storeData}
-                  >
-                    <span>상품 정보</span>
-                    <span className="text-gray-400">→</span>
-                  </button>
+            {isLoggedIn ? (
+              // 로그인 상태일 때 기존 UI 표시
+              <>
+                {/* 사업자 페이지 제목 */}
+                <div className="p-6 text-center">
+                  <h1 className="text-3xl font-bold text-gray-800">
+                    사업자 페이지
+                  </h1>
                 </div>
+                
+                {/* 가게 정보 카드 */}
+                {storeData ? (
+                  <div className="px-4 mb-6">
+                    <h2 className="text-xl font-bold text-gray-700 mb-3">
+                      내 가게 정보
+                    </h2>
+                    <StoreCard store={storeData} />
+                  </div>
+                ) : (
+                  <div className="px-4 py-6 mb-6 bg-gray-100 rounded-lg mx-4 text-center">
+                    <p className="text-gray-600 mb-3">
+                      등록된 가게 정보가 없습니다.
+                    </p>
+                    <button
+                      className="py-2 px-4 bg-[#F7B32B] hover:bg-[#E09D18] text-white font-bold rounded transition-colors"
+                      onClick={() => navigate('/register-store')}
+                    >
+                      가게 등록하기
+                    </button>
+                  </div>
+                )}
+                
+                <div className="mt-6">
+                  {/* 메뉴 목록 */}
+                  <div className="p-4 space-y-4">
+                    <div className="border-b pb-2">
+                      <button
+                        className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
+                        onClick={() => storeData && navigate(`/store/${storeData.id}/products`)}
+                        disabled={!storeData}
+                      >
+                        <span>상품 정보</span>
+                        <span className="text-gray-400">→</span>
+                      </button>
+                    </div>
 
-                <div className="border-b pb-2">
-                  <button
-                    className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
-                    onClick={() => navigate('/edit-store')}
-                  >
-                    <span>가게 정보</span>
-                    <span className="text-gray-400">→</span>
-                  </button>
-                </div>
+                    <div className="border-b pb-2">
+                      <button
+                        className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
+                        onClick={() => navigate('/edit-store')}
+                      >
+                        <span>가게 정보</span>
+                        <span className="text-gray-400">→</span>
+                      </button>
+                    </div>
 
-                <div className="border-b pb-2">
-                  <button
-                    className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
-                    onClick={() => setShowLogoutModal(true)}
-                  >
-                    <span>로그아웃</span>
-                    <span className="text-gray-400">→</span>
-                  </button>
-                </div>
+                    <div className="border-b pb-2">
+                      <button
+                        className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
+                        onClick={() => setShowLogoutModal(true)}
+                      >
+                        <span>로그아웃</span>
+                        <span className="text-gray-400">→</span>
+                      </button>
+                    </div>
 
-                <div className="border-b pb-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-500 font-bold">고객 문의</span>
-                    <span className="text-gray-400">luckeat@example.com</span>
+                    <div className="border-b pb-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500 font-bold">고객 문의</span>
+                        <span className="text-gray-400">luckeat@example.com</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </>
+            ) : (
+              // 비로그인 상태일 때 표시할 UI
+              <div className="p-8 flex flex-col items-center justify-center space-y-6">
+                <div className="text-center">
+                  <h3 className="text-xl font-bold mb-2">사업자 로그인이 필요합니다</h3>
+                  <p className="text-gray-500 mb-6">
+                    사업자 페이지를 이용하려면 로그인이 필요합니다.
+                    <br />로그인하고 가게를 관리해보세요!
+                  </p>
+                  <button
+                    className="py-3 px-6 bg-[#F7B32B] hover:bg-[#E09D18] text-white font-bold rounded-lg transition-colors"
+                    onClick={() => navigate('/login')}
+                  >
+                    로그인하러 가기
+                  </button>
+                </div>
+                
+                <div className="mt-8 w-full border-t pt-4 text-center">
+                  <p className="text-gray-500 mb-2">아직 계정이 없으신가요?</p>
+                  <button
+                    className="text-[#F7B32B] font-medium"
+                    onClick={() => navigate('/signup')}
+                  >
+                    회원가입하기
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </>
         )}
 
