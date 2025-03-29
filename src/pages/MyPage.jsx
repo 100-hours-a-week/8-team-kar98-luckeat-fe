@@ -9,7 +9,7 @@ import bakerDefaultImage from '../assets/images/제빵사디폴트이미지.png'
 
 function MyPage() {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user, logout, isLoggedIn } = useAuth()
   const [userData, setUserData] = useState(null)
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
@@ -17,20 +17,51 @@ function MyPage() {
 
   // 사용자 정보와 리뷰 목록 가져오기
   useEffect(() => {
+    // 로그인한 경우에만 데이터를 가져옵니다
+    // 기존 코드 주석 처리
+    // const fetchUserData = async () => {
+    //   try {
+    //     setLoading(true)
+
+    //     // 사용자 정보 가져오기
+    //     const userResponse = await getUserInfo()
+    //     if (userResponse.success) {
+    //       setUserData(userResponse.data)
+    //     }
+
+    //     // 사용자 리뷰 가져오기
+    //     const reviewsResponse = await getMyReviews()
+    //     if (reviewsResponse && reviewsResponse.data) {
+    //       setReviews(reviewsResponse.data.reviews || [])
+    //     }
+    //   } catch (error) {
+    //     console.error('사용자 데이터 로딩 중 오류:', error)
+    //   } finally {
+    //     setLoading(false)
+    //   }
+    // }
+
+    // if (user) {
+    //   fetchUserData()
+    // }
+    
+    // 새로운 코드: 로그인 상태 확인 후 데이터 가져오기
     const fetchUserData = async () => {
       try {
         setLoading(true)
 
-        // 사용자 정보 가져오기
-        const userResponse = await getUserInfo()
-        if (userResponse.success) {
-          setUserData(userResponse.data)
-        }
+        if (isLoggedIn && user) {
+          // 사용자 정보 가져오기
+          const userResponse = await getUserInfo()
+          if (userResponse.success) {
+            setUserData(userResponse.data)
+          }
 
-        // 사용자 리뷰 가져오기
-        const reviewsResponse = await getMyReviews()
-        if (reviewsResponse && reviewsResponse.data) {
-          setReviews(reviewsResponse.data.reviews || [])
+          // 사용자 리뷰 가져오기
+          const reviewsResponse = await getMyReviews()
+          if (reviewsResponse && reviewsResponse.data) {
+            setReviews(reviewsResponse.data.reviews || [])
+          }
         }
       } catch (error) {
         console.error('사용자 데이터 로딩 중 오류:', error)
@@ -39,10 +70,12 @@ function MyPage() {
       }
     }
 
-    if (user) {
-      fetchUserData()
+    fetchUserData()
+    // 로그인하지 않은 경우 로딩 상태 해제
+    if (!isLoggedIn) {
+      setLoading(false)
     }
-  }, [user])
+  }, [user, isLoggedIn])
 
   const handleLogout = async () => {
     try {
@@ -74,80 +107,122 @@ function MyPage() {
           </div>
         ) : (
           <>
-            {/* 사용자 정보 */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center">
-                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+            {isLoggedIn ? (
+              // 로그인 상태일 때 기존 UI 표시
+              <>
+                {/* 사용자 정보 */}
+                <div className="p-4 border-b border-gray-200">
+                  <div className="flex items-center">
+                    <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+                      <img
+                        src={bakerDefaultImage}
+                        alt="프로필"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-bold">
+                        {displayUser.nickname || '사용자'}님, 반갑수다~
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {displayUser.email || '이메일 정보가 없습니다'}
+                      </p>
+                      <div className="flex items-center mt-1">
+                        <span className="text-[#F7B32B] font-bold">
+                          {reviews.length}
+                        </span>
+                        <span className="ml-1 text-sm text-gray-500">
+                          개의 리뷰
+                        </span>
+                      </div>
+                      {displayUser.createdAt && (
+                        <p className="text-xs text-gray-400 mt-1">
+                          가입일:{' '}
+                          {new Date(displayUser.createdAt).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 메뉴 목록 */}
+                <div className="p-4 space-y-4">
+                  <div className="border-b pb-2">
+                    <button
+                      className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
+                      onClick={() => navigate('/reviews')}
+                    >
+                      <span>리뷰 관리</span>
+                      <span className="text-gray-400">→</span>
+                    </button>
+                  </div>
+
+                  <div className="border-b pb-2">
+                    <button
+                      className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
+                      onClick={() => navigate('/edit-profile')}
+                    >
+                      <span>회원 정보 수정</span>
+                      <span className="text-gray-400">→</span>
+                    </button>
+                  </div>
+
+                  <div className="border-b pb-2">
+                    <button
+                      className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
+                      onClick={() => setShowLogoutModal(true)}
+                    >
+                      <span>로그아웃</span>
+                      <span className="text-gray-400">→</span>
+                    </button>
+                  </div>
+
+                  <div className="border-b pb-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500">고객 문의</span>
+                      <span className="text-gray-400">luckeat@example.com</span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              // 비로그인 상태일 때 표시할 UI
+              <div className="p-8 flex flex-col items-center justify-center space-y-6">
+                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
                   <img
                     src={bakerDefaultImage}
                     alt="프로필"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="ml-4">
-                  <h3 className="text-lg font-bold">
-                    {displayUser.nickname || '사용자'}님, 반갑수다~
+                <div className="text-center">
+                  <h3 className="text-xl font-bold mb-2">
+                    로그인이 필요합니다
                   </h3>
-                  <p className="text-sm text-gray-500">
-                    {displayUser.email || '이메일 정보가 없습니다'}
+                  <p className="text-gray-500 mb-6">
+                    마이페이지를 이용하려면 로그인이 필요합니다.
+                    <br />
+                    로그인하고 제빵사의 다양한 기능을 사용해보세요!
                   </p>
-                  <div className="flex items-center mt-1">
-                    <span className="text-[#F7B32B] font-bold">
-                      {reviews.length}
-                    </span>
-                    <span className="ml-1 text-sm text-gray-500">
-                      개의 리뷰
-                    </span>
-                  </div>
-                  {displayUser.createdAt && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      가입일:{' '}
-                      {new Date(displayUser.createdAt).toLocaleDateString()}
-                    </p>
-                  )}
+                  <button
+                    className="py-3 px-6 bg-[#F7B32B] hover:bg-[#E09D18] text-white font-bold rounded-lg transition-colors"
+                    onClick={() => navigate('/login')}
+                  >
+                    로그인하러 가기
+                  </button>
+                </div>
+                
+                <div className="mt-8 w-full border-t pt-4 text-center">
+                  <p className="text-gray-500 mb-2">아직 계정이 없으신가요?</p>
+                  <button
+                    className="text-[#F7B32B] font-medium"
+                    onClick={() => navigate('/signup')}
+                  >
+                    회원가입하기
+                  </button>
                 </div>
               </div>
-            </div>
-
-            {/* 메뉴 목록 */}
-            <div className="p-4 space-y-4">
-              <div className="border-b pb-2">
-                <button
-                  className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
-                  onClick={() => navigate('/reviews')}
-                >
-                  <span>리뷰 관리</span>
-                  <span className="text-gray-400">→</span>
-                </button>
-              </div>
-
-              <div className="border-b pb-2">
-                <button
-                  className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
-                  onClick={() => navigate('/edit-profile')}
-                >
-                  <span>회원 정보 수정</span>
-                  <span className="text-gray-400">→</span>
-                </button>
-              </div>
-
-              <div className="border-b pb-2">
-                <button
-                  className="w-full text-left font-bold text-gray-700 flex justify-between items-center"
-                  onClick={() => setShowLogoutModal(true)}
-                >
-                  <span>로그아웃</span>
-                  <span className="text-gray-400">→</span>
-                </button>
-              </div>
-
-              <div className="border-b pb-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500">고객 문의</span>
-                  <span className="text-gray-400">luckeat@example.com</span>
-                </div>
-              </div>
-            </div>
+            )}
           </>
         )}
 

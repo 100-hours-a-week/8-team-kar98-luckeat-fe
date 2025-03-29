@@ -14,7 +14,7 @@ import {
 
 function ReviewManagementPage() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, isLoggedIn } = useAuth()
   const [writableStores, setWritableStores] = useState([])
   const [writtenReviews, setWrittenReviews] = useState([])
   const [expandedStoreId, setExpandedStoreId] = useState(null)
@@ -42,60 +42,62 @@ function ReviewManagementPage() {
     const fetchData = async () => {
       try {
         setLoading(true)
+        
+        if (isLoggedIn && user) {
+          // 사용자가 작성한 리뷰 목록 가져오기
+          const userReviewsResponse = await getMyReviews()
 
-        // 사용자가 작성한 리뷰 목록 가져오기
-        const userReviewsResponse = await getMyReviews()
+          if (userReviewsResponse && userReviewsResponse.data) {
+            const reviewData = userReviewsResponse.data.reviews || []
 
-        if (userReviewsResponse && userReviewsResponse.data) {
-          const reviewData = userReviewsResponse.data.reviews || []
+            // API 응답에서 리뷰 데이터 형식 매핑
+            const formattedReviews = reviewData.map((review) => ({
+              id: review.reviewId,
+              storeId: review.storeId,
+              storeName: review.storeName || '가게 정보 없음',
+              userName: user?.nickname || '사용자',
+              rating: review.rating,
+              content: review.reviewContent,
+              image: review.reviewImage,
+              date: new Date(review.createdAt)
+                .toLocaleDateString('ko-KR', {
+                  year: '2-digit',
+                  month: '2-digit',
+                  day: '2-digit',
+                })
+                .replace(/\. /g, '.')
+                .replace(/\.$/, ''),
+            }))
 
-          // API 응답에서 리뷰 데이터 형식 매핑
-          const formattedReviews = reviewData.map((review) => ({
-            id: review.reviewId,
-            storeId: review.storeId,
-            storeName: review.storeName || '가게 정보 없음',
-            userName: user?.nickname || '사용자',
-            rating: review.rating,
-            content: review.reviewContent,
-            image: review.reviewImage,
-            date: new Date(review.createdAt)
-              .toLocaleDateString('ko-KR', {
-                year: '2-digit',
-                month: '2-digit',
-                day: '2-digit',
-              })
-              .replace(/\. /g, '.')
-              .replace(/\.$/, ''),
-          }))
-
-          setWrittenReviews(formattedReviews)
-          console.log('사용자 리뷰 데이터:', formattedReviews)
-        } else {
-          console.log('리뷰 데이터가 없습니다.')
-          setWrittenReviews([])
-        }
-
-        // 리뷰 작성 가능한 가게 목록 가져오기
-        try {
-          const storesResponse = await getStores()
-          if (storesResponse && storesResponse.data) {
-            // 이미 리뷰를 작성한 가게 ID 목록
-            const reviewedStoreIds = new Set(
-              writtenReviews.map((review) => review.storeId),
-            )
-
-            // 아직 리뷰를 작성하지 않은 가게만 필터링
-            const availableStores = storesResponse.data.stores
-              ? storesResponse.data.stores.filter(
-                  (store) => !reviewedStoreIds.has(store.id),
-                )
-              : []
-
-            setWritableStores(availableStores)
-            console.log('리뷰 작성 가능한 가게:', availableStores)
+            setWrittenReviews(formattedReviews)
+            console.log('사용자 리뷰 데이터:', formattedReviews)
+          } else {
+            console.log('리뷰 데이터가 없습니다.')
+            setWrittenReviews([])
           }
-        } catch (storeError) {
-          console.error('가게 정보 로딩 실패:', storeError)
+
+          // 리뷰 작성 가능한 가게 목록 가져오기
+          try {
+            const storesResponse = await getStores()
+            if (storesResponse && storesResponse.data) {
+              // 이미 리뷰를 작성한 가게 ID 목록
+              const reviewedStoreIds = new Set(
+                writtenReviews.map((review) => review.storeId),
+              )
+
+              // 아직 리뷰를 작성하지 않은 가게만 필터링
+              const availableStores = storesResponse.data.stores
+                ? storesResponse.data.stores.filter(
+                    (store) => !reviewedStoreIds.has(store.id),
+                  )
+                : []
+
+              setWritableStores(availableStores)
+              console.log('리뷰 작성 가능한 가게:', availableStores)
+            }
+          } catch (storeError) {
+            console.error('가게 정보 로딩 실패:', storeError)
+          }
         }
 
         setLoading(false)
@@ -106,13 +108,12 @@ function ReviewManagementPage() {
       }
     }
 
-    if (user) {
-      fetchData()
-    } else {
-      // 로그인되어 있지 않은 경우 로그인 페이지로 리다이렉트
-      navigate('/login')
+    fetchData()
+    // 로그인하지 않은 경우 로딩 상태 해제
+    if (!isLoggedIn) {
+      setLoading(false)
     }
-  }, [user, navigate])
+  }, [user, navigate, writtenReviews, isLoggedIn])
 
   // 리뷰 작성 폼 토글
   const toggleReviewForm = (storeId) => {
