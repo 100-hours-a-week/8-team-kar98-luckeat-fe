@@ -1,36 +1,59 @@
-const stores = [
-  {
-    id: 1,
-    name: '가게 이름 1',
-    image: '🏪',
-    status: '준비중',
-    isDiscounted: true,
-    distance: 0.3,
-    reviews: 45,
-    shares: 12,
-  },
-  {
-    id: 2,
-    name: '가게 이름 2',
-    image: '🏪',
-    isDiscounted: false,
-    distance: 0.8,
-    reviews: 128,
-    shares: 34,
-  },
-  {
-    id: 3,
-    name: '가게 이름 3',
-    image: '🏪',
-    status: '준비중',
-    isDiscounted: true,
-    distance: 1.2,
-    reviews: 67,
-    shares: 23,
-  },
-]
+import { useState, useEffect, useRef } from 'react'
+import axios from 'axios'
 
 function StoreList({ sortBy = 'distance', showDiscountOnly = false }) {
+  const [stores, setStores] = useState([])
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const observerTarget = useRef(null)
+
+  const fetchStores = async (pageNum) => {
+    try {
+      setLoading(true)
+      const response = await axios.get(`/api/v1/stores?page=${pageNum}&size=20`)
+      const newStores = response.data.content
+      
+      if (pageNum === 0) {
+        setStores(newStores)
+      } else {
+        setStores(prev => [...prev, ...newStores])
+      }
+      
+      setHasMore(!response.data.last)
+    } catch (error) {
+      console.error('가게 목록을 불러오는데 실패했습니다:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchStores(0)
+  }, [])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading && hasMore) {
+          setPage(prev => prev + 1)
+          fetchStores(page + 1)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current)
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current)
+      }
+    }
+  }, [loading, hasMore, page])
+
   // 필터링
   const filteredStores = showDiscountOnly
     ? stores.filter((store) => store.isDiscounted)
@@ -79,6 +102,17 @@ function StoreList({ sortBy = 'distance', showDiscountOnly = false }) {
           </div>
         </div>
       ))}
+      <div ref={observerTarget} className="h-10" />
+      {loading && (
+        <div className="p-4 text-center text-gray-500">
+          로딩중...
+        </div>
+      )}
+      {!hasMore && stores.length > 0 && (
+        <div className="p-4 text-center text-gray-500">
+          더 이상 표시할 가게가 없습니다
+        </div>
+      )}
     </div>
   )
 }

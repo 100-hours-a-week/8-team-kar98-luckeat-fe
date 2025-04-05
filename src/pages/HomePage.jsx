@@ -27,6 +27,11 @@ function HomePage() {
   const [showSortOptions, setShowSortOptions] = useState(false)
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [page, setPage] = useState(0)
+  const [size] = useState(20)
+  const [hasMore, setHasMore] = useState(true)
+  const [totalElements, setTotalElements] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
   const sortOptionsRef = useRef(null)
   const storeListRef = useRef(null)
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -34,8 +39,6 @@ function HomePage() {
   const [displayedStores, setDisplayedStores] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const storesPerPage = 10 // 한 번에 로드할 가게 수 증가
-  const [hasMore, setHasMore] = useState(true) // 더 로드할 데이터 여부
-  const [totalStoreCount, setTotalStoreCount] = useState(0) // 전체 가게 수 추가
   const [autoSlide, setAutoSlide] = useState(true)
   const autoSlideInterval = useRef(null)
   const [slideDirection, setSlideDirection] = useState('right')
@@ -117,9 +120,9 @@ function HomePage() {
   }
 
   // 서버에서 페이지별로 데이터 가져오기
-  const fetchStores = useCallback(async (page = 1, reset = false) => {
+  const fetchStores = useCallback(async (pageNum = 0, reset = false) => {
     try {
-      if (page === 1) {
+      if (pageNum === 0) {
         setLoading(true)
       } else {
         setLoadingMore(true)
@@ -129,8 +132,8 @@ function HomePage() {
       let queryParams = new URLSearchParams()
 
       // 페이지네이션 파라미터 추가
-      queryParams.append('page', page)
-      queryParams.append('size', storesPerPage)
+      queryParams.append('page', pageNum)
+      queryParams.append('size', size)
 
       // 할인 중인 가게만 보기 필터
       if (showDiscountOnly) {
@@ -147,232 +150,95 @@ function HomePage() {
 
       // 검색어 필터링
       if (searchQuery) {
-        queryParams.append('query', searchQuery)
+        queryParams.append('storeName', searchQuery)
       }
 
       // 정렬 옵션
-      let sortBy = ''
-      let orderBy = ''
-      let orderDirection = ''
-      
+      let sortValue = 'distance'
       switch (sortOption) {
         case '가까운 순':
-          sortBy = 'distance'
-          orderBy = 'distance'
-          orderDirection = 'asc'
+          sortValue = 'distance'
           break
         case '리뷰 많은 순':
-          sortBy = 'reviewCount'
-          orderBy = 'reviewCount'
-          orderDirection = 'desc'
+          sortValue = 'rating'
           break
         case '공유 많은 순':
-          sortBy = 'shareCount'
-          orderBy = 'shareCount'
-          orderDirection = 'desc'
-          break
-        case '별점 높은 순':
-          sortBy = 'avgRating'
-          orderBy = 'avgRating'
-          orderDirection = 'desc'
+          sortValue = 'share'
           break
         default:
-          sortBy = 'distance'
-          orderBy = 'distance'
-          orderDirection = 'asc'
+          sortValue = 'distance'
       }
-      
-      // 다양한 정렬 파라미터 형식을 시도 (백엔드 API가 어떤 형식을 사용하는지에 따라)
-      queryParams.append('sort', sortBy)
-      queryParams.append('sortBy', sortBy) 
-      queryParams.append('orderBy', orderBy)
-      queryParams.append('orderDirection', orderDirection)
-      
+      queryParams.append('sort', sortValue)
+
       // 쿼리 파라미터가 있으면 URL에 추가
       if (queryParams.toString()) {
         url += `?${queryParams.toString()}`
       }
 
-      try {
-        const response = await fetch(url)
-        const data = await response.json()
-        
-        // 데이터가 없거나 배열이 아닌 경우 처리
-        if (!data || !Array.isArray(data)) {
-          if (page === 1) {
-            setStores([])
-            setDisplayedStores([])
-            setFilteredStores([])
-            setTotalStoreCount(0) // 가게가 없는 경우 개수 0으로 설정
-          }
-          setHasMore(false)
-          return
-        }
-        
-        // 페이지가 1이거나 reset이 true면 데이터 초기화
-        if (page === 1 || reset) {
-          // 클라이언트 측 정렬 적용 (백엔드에서 정렬이 제대로 작동하지 않는 경우)
-          // 필드가 없는 경우를 처리하기 위한 안전 조치
-          const sortData = [...data].sort((a, b) => {
-            // 기본값 설정 (필드가 없는 경우 사용)
-            const defaultA = 0
-            const defaultB = 0
-            
-            switch (sortOption) {
-              case '가까운 순':
-                return (a.distance || defaultA) - (b.distance || defaultB)
-              case '리뷰 많은 순':
-                return (b.reviewCount || defaultB) - (a.reviewCount || defaultA)
-              case '공유 많은 순':
-                return (b.shareCount || defaultB) - (a.shareCount || defaultA)
-              case '별점 높은 순':
-                return (b.avgRatingGoogle || defaultB) - (a.avgRatingGoogle || defaultA)
-              default:
-                return (a.distance || defaultA) - (b.distance || defaultB)
-            }
-          })
-          
-          setStores(sortData)
-          
-          // 추가: 카테고리 필터링이 활성화된 경우 클라이언트 측에서 추가 필터링 적용
-          let filteredData = [...sortData]
-          
-          // 카테고리 필터링
-          if (categoryFilter && categoryFilter !== '전체') {
-            const category = categoryOptions.find(opt => opt.name === categoryFilter)
-            if (category) {
-              filteredData = filteredData.filter(store => {
-                const storeCategoryId = store.categoryId || store.category || (store.categories && store.categories[0])
-                return String(storeCategoryId) === String(category.id)
-              })
-            }
-          }
-          
-          // 검색어 필터링 - 클라이언트 측에서도 적용
-          if (searchQuery && searchQuery.trim() !== '') {
-            filteredData = filteredData.filter(store => {
-              const storeName = store.storeName || store.name || ''
-              return storeName.toLowerCase().includes(searchQuery.toLowerCase())
-            })
-          }
-          
-          setDisplayedStores(filteredData)
-          setFilteredStores(filteredData)
-          // 첫 페이지인 경우 전체 가게 수를 현재 받은 데이터의 개수로 설정
-          setTotalStoreCount(filteredData.length)
-        } else {
-          // 이미 로드된 데이터에 추가
-          // 클라이언트 측 정렬 적용 (백엔드에서 정렬이 제대로 작동하지 않는 경우)
-          const sortData = [...data].sort((a, b) => {
-            // 기본값 설정 (필드가 없는 경우 사용)
-            const defaultA = 0
-            const defaultB = 0
-            
-            switch (sortOption) {
-              case '가까운 순':
-                return (a.distance || defaultA) - (b.distance || defaultB)
-              case '리뷰 많은 순':
-                return (b.reviewCount || defaultB) - (a.reviewCount || defaultA)
-              case '공유 많은 순':
-                return (b.shareCount || defaultB) - (a.shareCount || defaultA)
-              case '별점 높은 순':
-                return (b.avgRatingGoogle || defaultB) - (a.avgRatingGoogle || defaultA)
-              default:
-                return (a.distance || defaultA) - (b.distance || defaultB)
-            }
-          })
-          
-          setStores(prev => [...prev, ...sortData])
-          
-          // 추가: 카테고리 필터링이 활성화된 경우 클라이언트 측에서 추가 필터링 적용
-          let filteredData = [...sortData]
-          if (categoryFilter && categoryFilter !== '전체') {
-            const category = categoryOptions.find(opt => opt.name === categoryFilter)
-            if (category) {
-              filteredData = filteredData.filter(store => {
-                const storeCategoryId = store.categoryId || store.category || (store.categories && store.categories[0])
-                return String(storeCategoryId) === String(category.id)
-              })
-            }
-          }
-          
-          const updatedFilteredData = [...filteredStores, ...filteredData]
-          setDisplayedStores(prev => [...prev, ...filteredData])
-          setFilteredStores(updatedFilteredData)
-          // 총 가게 수 업데이트 (필터링된 데이터로 계산)
-          setTotalStoreCount(updatedFilteredData.length)
-        }
+      console.log('Fetching stores from:', url) // URL 로깅 추가
 
-        // 받은 데이터가 요청한 size보다 적으면 더 이상 데이터가 없는 것으로 간주
-        setHasMore(data.length === storesPerPage)
-        setCurrentPage(page)
-      } catch (error) {
-        //console.error('API 호출 오류:', error)
-        // 오류 발생 시 조용히 처리하고 사용자에게 오류 메시지 표시
-        if (page === 1) {
-          setStores([])
-          setDisplayedStores([])
-          setFilteredStores([])
-        }
-        setHasMore(false)
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
+      const data = await response.json()
+      console.log('Received data:', data) // 응답 데이터 로깅 추가
+
+      if (reset || pageNum === 0) {
+        setStores(data.content || [])
+        setFilteredStores(data.content || [])
+      } else {
+        setStores(prev => [...prev, ...(data.content || [])])
+        setFilteredStores(prev => [...prev, ...(data.content || [])])
+      }
+
+      setTotalElements(data.totalElements || 0)
+      setTotalPages(data.totalPages || 0)
+      setHasMore(!data.last)
+      setPage(pageNum)
     } catch (error) {
-      //dconsole.error('fetchStores 오류:', error)
-      // 전체 오류 처리
-      if (page === 1) {
-        setStores([])
-        setDisplayedStores([])
-        setFilteredStores([])
-      }
-      setHasMore(false)
+      console.error('가게 데이터를 가져오는 중 오류 발생:', error)
     } finally {
       setLoading(false)
       setLoadingMore(false)
     }
-  }, [showDiscountOnly, categoryFilter, searchQuery, sortOption, storesPerPage, API_BASE_URL])
+  }, [showDiscountOnly, categoryFilter, searchQuery, sortOption, size])
 
-  // 초기 데이터 로드 및 필터 변경 시 데이터 다시 로드
-  useEffect(() => {
-    // 필터가 변경되면 페이지를 1로 초기화하고 데이터 다시 로드
-    setCurrentPage(1) // 페이지 리셋
-    setDisplayedStores([]) // 표시된 가게 초기화
-    setStores([]) // 저장된 가게 초기화
-    setFilteredStores([]) // 필터링된 가게도 초기화
-    setHasMore(true) // 더 불러올 데이터가 있다고 가정
-    fetchStores(1, true)
-  }, [fetchStores, showDiscountOnly, categoryFilter, searchQuery, sortOption])
-
-  // 스크롤 이벤트 핸들러 최적화 (디바운싱 적용)
+  // 스크롤 이벤트 핸들러
   const handleScroll = useCallback(() => {
-    if (!storeListRef.current || loading || loadingMore || !hasMore) return;
+    if (loading || loadingMore || !hasMore) return
 
-    const { scrollTop, scrollHeight, clientHeight } = storeListRef.current;
-    
-    // 스크롤이 하단에 도달했는지 확인 (약간의 버퍼 추가)
-    if (scrollTop + clientHeight >= scrollHeight - 300) {
-      fetchStores(currentPage + 1);
+    const container = document.querySelector('.flex-1.overflow-hidden')
+    if (!container) return
+
+    const { scrollTop, scrollHeight, clientHeight } = container
+    console.log('스크롤 위치:', { scrollTop, scrollHeight, clientHeight })
+
+    // 스크롤이 하단에 가까워지면 다음 페이지 로드
+    if (scrollTop + clientHeight >= scrollHeight - 200) {
+      console.log('스크롤 하단 감지, 다음 페이지 로드:', page + 1)
+      fetchStores(page + 1)
     }
-  }, [currentPage, loading, loadingMore, hasMore, fetchStores]);
+  }, [loading, loadingMore, hasMore, page, fetchStores])
 
-  // 스크롤 이벤트 리스너 등록 (디바운싱 적용)
+  // 스크롤 이벤트 리스너 등록
   useEffect(() => {
-    const scrollContainer = storeListRef.current;
-    if (!scrollContainer) return;
+    const container = document.querySelector('.flex-1.overflow-hidden')
+    if (container) {
+      container.addEventListener('scroll', handleScroll)
+      return () => container.removeEventListener('scroll', handleScroll)
+    }
+  }, [handleScroll])
 
-    let timer;
-    const debouncedHandleScroll = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        handleScroll();
-      }, 100); // 100ms 디바운싱
-    };
+  // 초기 데이터 로드
+  useEffect(() => {
+    fetchStores(0, true)
+  }, [fetchStores])
 
-    scrollContainer.addEventListener('scroll', debouncedHandleScroll);
-    return () => {
-      clearTimeout(timer);
-      scrollContainer.removeEventListener('scroll', debouncedHandleScroll);
-    };
-  }, [handleScroll]);
+  // 필터 변경 시 데이터 리로드
+  useEffect(() => {
+    fetchStores(0, true)
+  }, [showDiscountOnly, categoryFilter, searchQuery, sortOption])
 
   const scrollToTop = () => {
     if (storeListRef.current) {
@@ -400,20 +266,20 @@ function HomePage() {
   }, [])
 
   const handleCategorySelect = (category) => {
-    // "전체" 카테고리 처리
     if (category === '전체') {
       setCategoryFilter('전체')
-      setSearchQuery('') // 검색어 초기화 추가
+      setSearchQuery('')
+      fetchStores(0, true)
       return
     }
     
-    // 이미 선택된 카테고리를 다시 클릭하면 해제하고 전체로 돌아감
     if (categoryFilter === category) {
       setCategoryFilter('전체')
-      setSearchQuery('') // 검색어 초기화 추가
+      setSearchQuery('')
     } else {
       setCategoryFilter(category)
     }
+    fetchStores(0, true)
   }
 
   const handleStoreClick = (store) => {
@@ -432,25 +298,12 @@ function HomePage() {
 
   const handleSearch = (query) => {
     setSearchQuery(query)
-    
-    // 검색어가 비었을 때 (사용자가 검색어를 지웠을 때)
     if (!query || query.trim() === '') {
       setSearchQuery('')
-      fetchStores(1, true)
+      fetchStores(0, true)
       return
     }
-    
-    // 검색어가 있을 경우 현재 데이터에서 즉시 필터링 적용
-    
-    // 현재 표시된 가게 목록에서 검색어로 필터링
-    const filteredResults = stores.filter(store => {
-      const storeName = store.storeName || store.name || ''
-      return storeName.toLowerCase().includes(query.toLowerCase())
-    })
-    
-    setFilteredStores(filteredResults)
-    setDisplayedStores(filteredResults)
-    setTotalStoreCount(filteredResults.length)
+    fetchStores(0, true)
   }
 
   return (
@@ -504,7 +357,6 @@ function HomePage() {
       <div
         className="flex-1 overflow-hidden pb-16"
         ref={storeListRef}
-        onScroll={handleScroll}
       >
         <div className="px-4 py-2 border-b">
           <SearchBar initialValue={searchQuery} onSearch={handleSearch} />
@@ -742,7 +594,7 @@ function HomePage() {
           <div className="py-2">
             <h2 className="font-bold text-lg">
               {categoryFilter ? `${categoryFilter} 맛집` : '전체 맛집'} (
-              {totalStoreCount.toString().replace('*', '')}
+              {totalElements.toString().replace('*', '')}
               )
             </h2>
           </div>
@@ -752,12 +604,12 @@ function HomePage() {
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-500"></div>
               <p className="ml-2">가게 정보를 불러오는 중...</p>
             </div>
-          ) : displayedStores && displayedStores.length > 0 ? (
+          ) : filteredStores && filteredStores.length > 0 ? (
             <>
-              {displayedStores.map((store, index) => (
+              {filteredStores.map((store, index) => (
                 <div
                   key={store.id || store.storeId || index}
-                  className="flex items-center p-3 border rounded-lg mb-3 cursor-pointer"
+                  className="flex items-center p-3 border rounded-lg mb-3 cursor-pointer hover:bg-gray-50"
                   onClick={() => handleStoreClick(store)}
                 >
                   <div className="w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
@@ -765,47 +617,26 @@ function HomePage() {
                       src={store.storeImg || storeDefaultImage}
                       alt={store.storeName || store.name || '가게 이미지'}
                       className="w-full h-full object-cover"
-                      loading="lazy" // 이미지 지연 로딩 적용
+                      loading="lazy"
                       onError={(e) => {
                         e.target.src = storeDefaultImage
                       }}
                     />
                   </div>
                   <div className="flex-1 ml-3">
-                    <h3
-                      className="font-bold truncate"
-                      title={store.storeName || store.name || '이름 없음'}
-                    >
-                      {(store.storeName || store.name || '이름 없음').length >
-                      20
-                        ? (
-                            store.storeName ||
-                            store.name ||
-                            '이름 없음'
-                          ).substring(0, 20) + '...'
-                        : store.storeName || store.name || '이름 없음'}
+                    <h3 className="font-bold truncate" title={store.storeName || store.name || '이름 없음'}>
+                      {store.storeName || store.name || '이름 없음'}
                     </h3>
-                    <p
-                      className="text-sm text-gray-500 truncate"
-                      title={store.address || '주소 정보 없음'}
-                    >
+                    <p className="text-sm text-gray-500 truncate" title={store.address || '주소 정보 없음'}>
                       {simplifyAddress(store.address)}
                     </p>
                     <div className="flex items-center">
                       <div className="flex items-center text-sm text-yellow-500 mr-2">
                         <span className="mr-1">★</span>
-                        <span>
-                          {store.avgRatingGoogle
-                            ? store.avgRatingGoogle.toFixed(1)
-                            : '0.0'}
-                        </span>
-                        <span className="text-gray-500 ml-1">
-                          ({store.reviewCount || 0})
-                        </span>
+                        <span>{store.avgRatingGoogle ? store.avgRatingGoogle.toFixed(1) : '0.0'}</span>
+                        <span className="text-gray-500 ml-1">({store.reviewCount || 0})</span>
                       </div>
-                      <p className="text-sm font-medium">
-                        공유 {store.shareCount || 0}회
-                      </p>
+                      <p className="text-sm font-medium">공유 {store.shareCount || 0}회</p>
                     </div>
                   </div>
                 </div>
@@ -816,9 +647,14 @@ function HomePage() {
                   <p className="text-gray-500">더 많은 가게 불러오는 중...</p>
                 </div>
               )}
-              {!loadingMore && !hasMore && displayedStores.length > 0 && (
+              {!loadingMore && !hasMore && filteredStores.length > 0 && (
                 <div className="flex justify-center items-center py-4">
                   <p className="text-gray-500">더 이상 표시할 가게가 없습니다</p>
+                </div>
+              )}
+              {!loadingMore && hasMore && (
+                <div className="flex justify-center items-center py-4">
+                  <p className="text-gray-500">아래로 스크롤하여 더 많은 가게 보기</p>
                 </div>
               )}
             </>
@@ -829,9 +665,10 @@ function HomePage() {
                 <button 
                   className="mt-2 text-blue-500 underline"
                   onClick={() => {
-                    setCategoryFilter('전체');
-                    setSearchQuery('');
-                    setShowDiscountOnly(false);
+                    setCategoryFilter('전체')
+                    setSearchQuery('')
+                    setShowDiscountOnly(false)
+                    fetchStores(0, true)
                   }}
                 >
                   전체 카테고리보기
