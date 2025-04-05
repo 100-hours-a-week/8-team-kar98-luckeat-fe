@@ -21,6 +21,7 @@ Date.prototype.getTimezoneOffset = function() {
 
 // axios 인스턴스 생성
 const apiClient = axios.create({
+  withCredentials: true, // CORS 요청 시 쿠키와 인증 헤더 포함
   headers: {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
