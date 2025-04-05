@@ -21,22 +21,23 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: apiUrl,
           changeOrigin: true,
-          secure: true,
-          ws: true,
-          // rewrite: (path) => path.replace(/^\/api/, ''),
-          configure: (proxy, _options) => {
-            proxy.on('error', (err, _req, _res) => {
-              // console.log('프록시 에러:', err)
-            })
-            proxy.on('proxyReq', (proxyReq, req, _res) => {
-              // console.log('프록시 요청:', req.method, req.url)
-            })
-            proxy.on('proxyRes', (proxyRes, req, _res) => {
-              // console.log('프록시 응답:', proxyRes.statusCode, req.url)
-            })
+          secure: false,
+          onError: (err, req, res) => {
+            // 프록시 에러 처리
           },
+          onProxyReq: (proxyReq, req, res) => {
+            // 프록시 요청 처리
+          },
+          onProxyRes: (proxyRes, req, res) => {
+            // 프록시 응답 처리
+          }
         },
       },
+      cors: {
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization']
+      }
     },
     build: {
       outDir: `dist/${mode}`,
