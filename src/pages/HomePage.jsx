@@ -31,26 +31,26 @@ const categoryOptions = [
 ]
 
 // 카드 뉴스 데이터 - 컴포넌트 외부로 이동하여 재렌더링 방지
-const cardNews = [
-  {
-    id: 1,
-    image: banner01,
-    /*페이지 추후 추가 후 연결
-    link: '/intro',*/
-  },
-  {
-    id: 2,
-    image: banner02,
-    /*페이지 추후 추가 후 연결
-    link: '/jeju-special',*/
-  },
-  {
-    id: 3,
-    image: banner03,
-    /*페이지 추후 추가 후 연결
-     link: '/partner',*/
-  },
-]
+  const cardNews = [
+    {
+      id: 1,
+      image: banner01,
+      /*페이지 추후 추가 후 연결
+      link: '/intro',*/
+    },
+    {
+      id: 2,
+      image: banner02,
+      /*페이지 추후 추가 후 연결
+      link: '/jeju-special',*/
+    },
+    {
+      id: 3,
+      image: banner03,
+      /*페이지 추후 추가 후 연결
+       link: '/partner',*/
+    },
+  ]
 
 // 주소에서 '대한민국' 제거하는 함수 - 컴포넌트 외부로 이동하여 재렌더링 방지
 const simplifyAddress = (address) => {
@@ -291,7 +291,7 @@ function HomePage() {
         },
         { enableHighAccuracy: true }
       )
-    } else {
+        } else {
       alert('이 브라우저에서는 위치 정보를 지원하지 않습니다. 기본 위치를 사용합니다.')
     }
   }, [])
@@ -409,26 +409,26 @@ function HomePage() {
 
   const handleCardClick = useCallback((link) => {
     if (link) {
-      navigate(link)
-    }
+    navigate(link)
+  }
   }, [navigate])
 
   // 검색 디바운스 함수 생성 (300ms 지연)
   const debouncedSearch = useRef(
     debounce((query) => {
-      setSearchQuery(query)
-      
-      // 검색어가 비었을 때 (사용자가 검색어를 지웠을 때)
-      if (!query || query.trim() === '') {
-        setSearchQuery('')
+    setSearchQuery(query)
+    
+    // 검색어가 비었을 때 (사용자가 검색어를 지웠을 때)
+    if (!query || query.trim() === '') {
+      setSearchQuery('')
         // 모든 필터링 조건을 초기화하고 데이터를 다시 로드
         setCurrentSlide(0)
         setAutoSlide(true)
         setShowArrows(false)
         fetchNextPage({ pageParam: 0 })
-        return
-      }
-      
+      return
+    }
+    
       // 검색어가 변경되면 백엔드 API를 통해 결과를 가져옵니다
       setCurrentSlide(0)
       setAutoSlide(true)
@@ -605,7 +605,7 @@ function HomePage() {
           <div className="relative w-full h-48 overflow-hidden rounded-lg">
             {cardNews.map((card) => (
               <Banner 
-                key={card.id} 
+                key={card.id}
                 data={card} 
                 currentSlide={currentSlide}
                 handleCardClick={handleCardClick}
@@ -723,7 +723,7 @@ function HomePage() {
                 />
               </svg>
             </button>
-            
+
             {showSortOptions && (
               <div className="absolute right-0 mt-1 w-32 bg-white border rounded-lg shadow-lg z-10">
                 <div className="py-1">
