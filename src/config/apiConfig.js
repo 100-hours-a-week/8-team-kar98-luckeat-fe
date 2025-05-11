@@ -4,6 +4,7 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 // 환경변수에서 API URL 가져오기 (없으면 기본값 사용)
 const API_URL = import.meta.env.VITE_API_URL || 'https://dxa66rf338pjr.cloudfront.net'
 
+// API 기본 URL 정의
 const API_BASE_URL = `${API_URL}/api/v1`
 const API_DIRECT_URL = API_URL
 
@@ -41,6 +42,7 @@ const getApiUrl = (endpoint) => `${API_BASE_URL}${endpoint}`
 // 직접 API URL 생성 함수 (프록시 우회)
 const getDirectApiUrl = (endpoint) => `${API_DIRECT_URL}/api/v1${endpoint}`
 
+// 모든 필요한 값들을 한 번만 export
 export {
   API_BASE_URL,
   API_DIRECT_URL,
